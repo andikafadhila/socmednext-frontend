@@ -1,0 +1,273 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Box,
+  FormControl,
+  Input,
+  Button,
+  Center,
+  Stack,
+  Heading,
+  Text,
+  FormHelperText,
+  InputGroup,
+  InputRightElement,
+} from "@chakra-ui/react";
+import validator from "validator";
+import baseUrl from "../utils/baseUrl";
+import PhotoLab from "../public/PhotoLab.png";
+import PhotoLabRegister from "../public/PhotoLabRegister.webp";
+import Image from "next/image";
+import Link from "next/link";
+
+const login = () => {
+  const [usernameErrors, setUsernameErrors] = useState([]);
+  const [emailErrors, setEmailErrors] = useState([]);
+  const [passwordErrors, setPasswordErrors] = useState([]);
+  const [confirmPasswordErrors, setConfirmPasswordErrors] = useState([]);
+
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [allValid, setAllValid] = useState(false);
+
+  const [show, setShow] = React.useState(false);
+  const handleClick = () => setShow(!show);
+
+  // ===== Validate Username =====
+
+  const validateUsername = async () => {
+    const errors = [];
+    if (!validator.isLength(username, { min: 8 })) {
+      errors.push("username length must be at least 8 characters");
+    }
+    // const response = await axios.post(process.env.API_ARI + "/exists", {
+    //   username: username,
+    // });
+    return errors;
+  };
+
+  // =====      Validate Username           =====
+
+  // =====      Validate Email              =====
+
+  const validateEmail = async () => {
+    const errors = [];
+    const normalizedEmail = validator.normalizeEmail(email);
+    if (!validator.isEmail(normalizedEmail)) {
+      errors.push("Please enter a valid email.");
+    }
+
+    return errors;
+  };
+
+  // =====       Validate Email             =====
+
+  // =====       Validate Password          =====
+
+  const validatePassword = () => {
+    const errors = [];
+    if (!validator.isLength(password, { min: 8, max: undefined })) {
+      errors.push("Passwords must be at least 8 characters.");
+    }
+
+    return errors;
+  };
+
+  // =====       Validate Password          =====
+
+  // =====       Validate Confirm password  =====
+
+  const validateConfirmPassword = () => {
+    const errors = [];
+    if (confirmPassword !== password) {
+      errors.push("Passwords do not match.");
+    }
+    return errors;
+  };
+
+  // =====       Validate Confirm password  =====
+
+  useEffect(() => {
+    const validate = async () => {
+      const usernameErrors = await validateUsername();
+      const emailErrors = validateEmail();
+      const passwordErrors = validatePassword();
+      const confirmPasswordErrors = validateConfirmPassword();
+      if (
+        usernameErrors.length ||
+        emailErrors.length ||
+        passwordErrors.length ||
+        confirmPasswordErrors.length
+      ) {
+        setAllValid(false);
+      } else {
+        setAllValid(true);
+      }
+    };
+    validate();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username, email, password, confirmPassword]);
+
+  useEffect(() => {
+    setConfirmPasswordErrors(validateConfirmPassword());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmPassword]);
+
+  return (
+    <Center h="100vh" className="bg-gray-50">
+      <Stack boxShadow="md" bg="whiteAlpha.900" p="20" rounded="md">
+        <div className="w-64 mx-auto">
+          <Image src={PhotoLab} />
+        </div>
+        <Text fontSize="2xl" fontWeight="bold">
+          Sign Up.
+        </Text>
+        <Text fontSize="md" color="gray.600">
+          Please log in with the data you entered during registration.
+        </Text>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const usernameErrors = await validateUsername();
+            const emailErrors = await validateEmail();
+            const passwordErrors = validatePassword();
+            const confirmPasswordErrors = validateConfirmPassword();
+            setUsernameErrors(usernameErrors);
+            setEmailErrors(emailErrors);
+            setPasswordErrors(passwordErrors);
+            setConfirmPasswordErrors(confirmPasswordErrors);
+            if (
+              usernameErrors.length ||
+              emailErrors.length ||
+              passwordErrors.length ||
+              confirmPasswordErrors.length
+            ) {
+              console.log("check failed");
+            } else {
+              axios
+                .post(process.env.MONGODB_URI + "/register", {
+                  username,
+                  password,
+                  email,
+                })
+                .then((response) => {
+                  localStorage.setItem("token", response.data.token);
+                  localStorage.setItem("username", response.data.username);
+                  history.push("/");
+                });
+            }
+          }}
+        >
+          <FormControl display="flex" flexDirection="column">
+            <Stack spacing={2} mx="auto">
+              <Input
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+                onBlur={async () => {
+                  console.log("usernameErrors", usernameErrors);
+                  setUsernameErrors(await validateUsername());
+                }}
+                size="md"
+                name="username"
+                id="Username"
+                type="Username"
+                placeholder="Username"
+                width="xs"
+              />
+              {usernameErrors.map((errors) => {
+                return <FormHelperText color="red">{errors}</FormHelperText>;
+              })}
+              <Input
+                novalidate
+                onBlur={async () => {
+                  setEmailErrors(await validateEmail());
+                }}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
+                size="md"
+                name="email"
+                id="Email"
+                type="Email"
+                placeholder="Email"
+                width="xs"
+              />
+              {emailErrors.map((errors) => {
+                return <FormHelperText color="red">{errors}</FormHelperText>;
+              })}
+              <InputGroup>
+                <Input
+                  onBlur={() => {
+                    setPasswordErrors(validatePassword());
+                  }}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                  size="md"
+                  name="password"
+                  id="Password"
+                  type={show ? "text" : "password"}
+                  placeholder="Password"
+                  width="xs"
+                />
+                <InputRightElement width="4.5rem">
+                  <Button h="1.75rem" size="sm" onClick={handleClick}>
+                    {show ? "Hide" : "Show"}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              {passwordErrors.map((errors) => {
+                return <FormHelperText color="red">{errors}</FormHelperText>;
+              })}
+              <Input
+                onBlur={() => {
+                  setConfirmPasswordErrors(validateConfirmPassword());
+                }}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
+                size="md"
+                id="Confirm Password"
+                type="Password"
+                placeholder="Confirm Password"
+                width="xs"
+              />
+              {confirmPasswordErrors.map((errors) => {
+                return <FormHelperText color="red">{errors}</FormHelperText>;
+              })}
+            </Stack>
+          </FormControl>
+        </form>
+        <br />
+        <Stack>
+          <Button
+            disabled={!allValid}
+            type="submit"
+            colorScheme="red"
+            variant="solid"
+            width={20}
+            mx="auto"
+          >
+            Submit
+          </Button>
+        </Stack>
+
+        <Stack justify="center" color="gray.600" spacing="3">
+          <Text as="div" textAlign="center">
+            <span>Already have an account?</span>
+            <Button colorScheme="red" variant="link">
+              <Link href="/login">Log In.</Link>
+            </Button>
+          </Text>
+        </Stack>
+      </Stack>
+    </Center>
+  );
+};
+
+export default login;
