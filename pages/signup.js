@@ -40,12 +40,16 @@ const login = () => {
 
   const validateUsername = async () => {
     const errors = [];
-    if (!validator.isLength(username, { min: 8 })) {
-      errors.push("username length must be at least 8 characters");
+
+    const response = await axios.post(
+      "http://localhost:5000/auth/getusername",
+      {
+        username: username,
+      }
+    );
+    if (response.data.exists) {
+      errors.push("Username already registered.");
     }
-    // const response = await axios.post(process.env.API_ARI + "/exists", {
-    //   username: username,
-    // });
     return errors;
   };
 
@@ -59,7 +63,12 @@ const login = () => {
     if (!validator.isEmail(normalizedEmail)) {
       errors.push("Please enter a valid email.");
     }
-
+    const response = await axios.post("http://localhost:5000/auth/getemail", {
+      email: email,
+    });
+    if (response.data.exists) {
+      errors.push("Email already registered.");
+    }
     return errors;
   };
 
@@ -93,7 +102,7 @@ const login = () => {
   useEffect(() => {
     const validate = async () => {
       const usernameErrors = await validateUsername();
-      const emailErrors = validateEmail();
+      const emailErrors = await validateEmail();
       const passwordErrors = validatePassword();
       const confirmPasswordErrors = validateConfirmPassword();
       if (
@@ -148,17 +157,20 @@ const login = () => {
             ) {
               console.log("check failed");
             } else {
-              axios
-                .post(process.env.MONGODB_URI + "/register", {
+              try {
+                axios.post("http://localhost:5000/auth/register", {
                   username,
                   password,
                   email,
-                })
-                .then((response) => {
-                  localStorage.setItem("token", response.data.token);
-                  localStorage.setItem("username", response.data.username);
-                  history.push("/");
                 });
+              } catch (error) {
+                console.log(error.response.data.message || "network error");
+              }
+              // .then((response) => {
+              //   localStorage.setItem("token", response.data.token);
+              //   localStorage.setItem("username", response.data.username);
+              //   history.push("/");
+              // });
             }
           }}
         >
@@ -169,7 +181,6 @@ const login = () => {
                   setUsername(e.target.value);
                 }}
                 onBlur={async () => {
-                  console.log("usernameErrors", usernameErrors);
                   setUsernameErrors(await validateUsername());
                 }}
                 size="md"
@@ -242,20 +253,20 @@ const login = () => {
               })}
             </Stack>
           </FormControl>
+          <br />
+          <Stack>
+            <Button
+              disabled={!allValid}
+              type="submit"
+              colorScheme="red"
+              variant="solid"
+              width={20}
+              mx="auto"
+            >
+              Submit
+            </Button>
+          </Stack>
         </form>
-        <br />
-        <Stack>
-          <Button
-            disabled={!allValid}
-            type="submit"
-            colorScheme="red"
-            variant="solid"
-            width={20}
-            mx="auto"
-          >
-            Submit
-          </Button>
-        </Stack>
 
         <Stack justify="center" color="gray.600" spacing="3">
           <Text as="div" textAlign="center">

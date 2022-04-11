@@ -9,6 +9,7 @@ import {
   Stack,
   Heading,
   Text,
+  FormHelperText,
 } from "@chakra-ui/react";
 import validator from "validator";
 import baseUrl from "../utils/baseUrl";
@@ -16,9 +17,14 @@ import PhotoLab from "../public/PhotoLab.png";
 import PhotoLabRegister from "../public/PhotoLabRegister.webp";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { loginAction } from "../redux/actions/userActions";
+import { connect, useSelector } from "react-redux";
 
-const Register = () => {
-  
+const login = ({ loginAction }) => {
+  const [error, setError] = useState("");
+  const router = useRouter();
+
   return (
     <Center h="100vh" className="bg-gray-50">
       <Stack boxShadow="md" bg="whiteAlpha.900" p="20" rounded="md">
@@ -33,36 +39,38 @@ const Register = () => {
         </Text>
         <form
           onSubmit={async (e) => {
-            e.preventDefault();
-            const usernameErrors = await validateUsername();
-            const emailErrors = await validateEmail();
-            const passwordErrors = validatePassword();
-            const confirmPasswordErrors = validateConfirmPassword();
-            setUsernameErrors(usernameErrors);
-            setEmailErrors(emailErrors);
-            setPasswordErrors(passwordErrors);
-            setConfirmPasswordErrors(confirmPasswordErrors);
-
-            if (
-              usernameErrors.length ||
-              emailErrors.length ||
-              passwordErrors.length ||
-              confirmPasswordErrors.length
-            ) {
-              console.log("check failed");
-            } else {
-              axios
-                .post(process.env.MONGODB_URI + "/register", {
-                  username,
-                  password,
-                  email,
-                })
-                .then((response) => {
-                  localStorage.setItem("token", response.data.token);
-                  localStorage.setItem("username", response.data.username);
-                  history.push("/");
-                });
-            }
+            e.preventDefault(); // Prevent default submission
+            loginAction({
+              username: e.target.username.value,
+              email: e.target.username.value,
+              password: e.target.password.value,
+            });
+            router.push("/");
+            // axios
+            //   .post("http://localhost:5000/auth/login", {
+            //     username: e.target.username.value,
+            //     email: e.target.username.value,
+            //     password: e.target.password.value,
+            //   })
+            //   .then((response) => {
+            //     console.log(response);
+            //     for (const key in response.data) {
+            //       localStorage.setItem(key, response.data[key]);
+            //     }
+            //     router.push("/");
+            //   })
+            //   .catch((error) => {
+            //     if (error.response) {
+            //       setError(error.response.data.message);
+            //     } else if (error.request) {
+            //       setError(
+            //         "We couldn't reach PhotoLab. Check your network connection."
+            //       );
+            //     } else {
+            //       setError("Something went wrong!");
+            //     }
+            //     console.log(error);
+            //     });
           }}
         >
           <FormControl display="flex" flexDirection="column">
@@ -70,6 +78,7 @@ const Register = () => {
               <Input
                 isRequired
                 size="md"
+                name="username"
                 id="Username"
                 type="Username"
                 placeholder="Username"
@@ -77,6 +86,7 @@ const Register = () => {
               />
               <Input
                 size="md"
+                name="password"
                 id="Password"
                 type="Password"
                 placeholder="Password"
@@ -84,21 +94,23 @@ const Register = () => {
               />
             </Stack>
           </FormControl>
+          <br />
+          <Stack>
+            <Button
+              colorScheme="red"
+              variant="solid"
+              type="submit"
+              disabled={false}
+              width={20}
+              mx="auto"
+            >
+              Submit
+            </Button>
+            {error ? (
+              <FormHelperText color="red">{error}</FormHelperText>
+            ) : null}
+          </Stack>
         </form>
-        <br />
-        <Stack>
-          <Button
-            colorScheme="red"
-            variant="solid"
-            type="submit"
-            disabled={true}
-            width={20}
-            mx="auto"
-          >
-            Submit
-          </Button>
-        </Stack>
-
         <Stack justify="center" color="gray.600" spacing="3">
           <Text as="div" textAlign="center">
             <span>Don't have an account yet? </span>
@@ -115,4 +127,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default connect(null, { loginAction })(login);

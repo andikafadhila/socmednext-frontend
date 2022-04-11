@@ -1,4 +1,13 @@
+import Link from "next/link";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+
 function MiniProfile() {
+  const router = useRouter();
+  const logoutHandler = () => {
+    Cookies.remove("token");
+    router.push("/login");
+  };
   return (
     <div className="flex items-center justify-between mt-14 ml-10">
       <img
@@ -11,7 +20,12 @@ function MiniProfile() {
         <h3 className="text-sm text-gray-400">Welcome to Instagram!</h3>
       </div>
 
-      <button className="text-blue-400 text-sm font-semibold">Sign Out </button>
+      <button
+        className="text-blue-400 text-sm font-semibold"
+        onClick={logoutHandler}
+      >
+        Sign Out
+      </button>
     </div>
   );
 }

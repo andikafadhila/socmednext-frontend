@@ -9,8 +9,17 @@ import {
   MenuIcon,
   HomeIcon,
 } from "@heroicons/react/outline";
+import { Menu, MenuButton, MenuItem, Button, MenuList } from "@chakra-ui/react";
+import Link from "next/link";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 function Header() {
+  const router = useRouter();
+  const logoutHandler = () => {
+    Cookies.remove("token");
+    router.push("/login");
+  };
   return (
     <div className="shadow-sm border-b bg-white sticky top-0 z-10">
       <div className="flex justify-between max-w-6xl bg-white mx-5 xl:mx-auto">
@@ -44,7 +53,9 @@ function Header() {
 
         {/* Right */}
         <div className="flex items-center justify-end space-x-4">
-          <HomeIcon className="navBtn" />
+          <Link href="/">
+            <HomeIcon className="navBtn" />
+          </Link>
           <MenuIcon className="h-6 md:hidden cursor-pointer" />
           <div className="relative navBtn">
             <PaperAirplaneIcon className="navBtn rotate-45" />
@@ -55,12 +66,23 @@ function Header() {
           <PlusCircleIcon className="navBtn" />
           <UserGroupIcon className="navBtn" />
           <HeartIcon className="navBtn" />
-
-          <img
-            src="https://foto.wartaekonomi.co.id/files/arsip_foto_2019_11_16/otomotif_215524_small.jpg"
-            alt="profile picture"
-            className="h-10 w-10 object-cover rounded-full cursor-pointer"
-          />
+          <Menu>
+            <MenuButton as={Button} bg="white" rounded="full">
+              <img
+                src="https://foto.wartaekonomi.co.id/files/arsip_foto_2019_11_16/otomotif_215524_small.jpg"
+                alt="profile picture"
+                className="h-10 w-10 object-cover rounded-full cursor-pointer"
+              />
+            </MenuButton>
+            <MenuList>
+              <Link href="/userProfile">
+                <MenuItem>Profile</MenuItem>
+              </Link>
+              <MenuItem color="red" onClick={logoutHandler}>
+                Sign Out
+              </MenuItem>
+            </MenuList>
+          </Menu>
         </div>
       </div>
     </div>
