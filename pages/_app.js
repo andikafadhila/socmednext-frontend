@@ -3,15 +3,15 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { store } from "../redux/reducers";
 import { Provider } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
-// import AuthProvider from "../components/authProvider";
+import AuthProvider from "../components/authProvider";
 
 function MyApp({ Component, pageProps }) {
   return (
     <Provider store={store}>
       <ChakraProvider>
-        {/* <AuthProvider> */}
-        <Component {...pageProps} />
-        {/* </AuthProvider> */}
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
       </ChakraProvider>
     </Provider>
   );

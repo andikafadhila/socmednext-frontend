@@ -1,34 +1,40 @@
+import axios from "axios";
 import Post from "./Post";
-
-const posts = [
-  {
-    id: "123",
-    username: "andika",
-    userImg:
-      "https://foto.wartaekonomi.co.id/files/arsip_foto_2019_11_16/otomotif_215524_small.webp",
-    img: "https://cdn-brilio-net.akamaized.net/news/2022/02/23/223670/1676017-1000xauto-ekspresi-foto-close-up-ala-chelsea-islan.jpg",
-    caption: "maluv",
-  },
-  {
-    id: "123",
-    username: "andika",
-    userImg:
-      "https://foto.wartaekonomi.co.id/files/arsip_foto_2019_11_16/otomotif_215524_small.webp",
-    img: "https://cdn-brilio-net.akamaized.net/news/2022/02/23/223670/1676017-1000xauto-ekspresi-foto-close-up-ala-chelsea-islan.jpg",
-    caption: "maluv",
-  },
-];
+import { useEffect, useState } from "react";
+import API_URL from "./apiurl";
 
 function Posts() {
+  const [data, setData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      let res = await axios.get(`${API_URL}/post/get-post`);
+      setData(res.data);
+      console.log("ini adalah res.data", res.data);
+      console.log(
+        "ini adalah res.data.photos[0].image",
+        res.data[0].photos[0].image
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  // console.log("ini data", data[0].photos[0].image);
+  // const alamatfoto = data[0].photos[0].image;
   return (
     <div>
-      {posts.map((post) => (
+      {data.map((post) => (
         <Post
           key={post.id}
           id={post.id}
           username={post.username}
-          userImg={post.userImg}
-          img={post.img}
+          userImg={API_URL + post.profilepic}
+          dataimg={post.photos} //ini isinya object data foto post
+          numberOfLikes={post.number_of_likes}
           caption={post.caption}
         />
       ))}

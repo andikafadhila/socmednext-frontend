@@ -1,6 +1,10 @@
 const INITIAL_STATE = {
   id: 0,
   isLogin: false,
+  bio: "",
+  fullname: "",
+  isVerified: "",
+  profilepic: "",
   username: "",
   error_mes: "",
   roleId: 0,

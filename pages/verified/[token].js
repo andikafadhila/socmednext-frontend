@@ -54,7 +54,7 @@ const Verified = (props) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center">
+      <div className="mx-auto my-auto">
         <div>Loading bro....</div>
       </div>
     );

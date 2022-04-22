@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { loginAction } from "../redux/actions/userActions";
 import { connect, useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
 
 const login = ({ loginAction }) => {
   const [error, setError] = useState("");
@@ -45,7 +46,7 @@ const login = ({ loginAction }) => {
               email: e.target.username.value,
               password: e.target.password.value,
             });
-            router.push("/");
+
             // axios
             //   .post("http://localhost:5000/auth/login", {
             //     username: e.target.username.value,
@@ -123,6 +124,7 @@ const login = ({ loginAction }) => {
           </Button>
         </Stack>
       </Stack>
+      <ToastContainer />
     </Center>
   );
 };
