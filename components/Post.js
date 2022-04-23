@@ -14,9 +14,41 @@ import {
 
 import { HeartIcon as HearIconFilled } from "@heroicons/react/solid";
 import API_URL from "./apiurl";
+import Slider from "react-slick";
+
+// carousel arrow
+function SampleNextArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{ ...style, right: 15, zIndex: 5 }}
+      onClick={onClick}
+    />
+  );
+}
+
+function SamplePrevArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{ ...style, left: 15, zIndex: 5 }}
+      onClick={onClick}
+    />
+  );
+}
 
 function Post({ key, id, username, userImg, dataimg, caption }) {
-  console.log("ini data img", dataimg);
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
+  };
   return (
     <div className="bg-white my-7 border rounded-sm">
       {/* Header */}
@@ -30,15 +62,17 @@ function Post({ key, id, username, userImg, dataimg, caption }) {
         <DotsHorizontalIcon className="h-5" />
       </div>
       {/* Img */}
-      {dataimg.map((val) => {
-        return (
-          <img
-            src={API_URL + val.image}
-            className="object-cover w-full aspect-square"
-            alt=""
-          />
-        );
-      })}
+      <Slider {...settings}>
+        {dataimg.map((val) => {
+          return (
+            <img
+              src={API_URL + val.image}
+              className="object-cover w-full aspect-square"
+              alt=""
+            />
+          );
+        })}
+      </Slider>
 
       {/* Buttons */}
       <div className="flex justify-between p-5">

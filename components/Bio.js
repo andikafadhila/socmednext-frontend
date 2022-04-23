@@ -70,7 +70,7 @@ function Bio({ editAction }) {
       formData.append("avatar", selectedImage.file);
 
       await axios.all([
-        axios.put(`${API_URL}/post`, formData, {
+        axios.put(`${API_URL}/edit`, formData, {
           headers: {
             authorization: `Bearer ${token}`,
           },

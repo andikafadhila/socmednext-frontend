@@ -8,10 +8,11 @@ import {
   PaperAirplaneIcon,
   MenuIcon,
   HomeIcon,
-  PhotographIcon,
-  CameraIcon,
+  XCircleIcon,
+  MinusCircleIcon,
 } from "@heroicons/react/outline";
 import {
+  Text,
   Menu,
   MenuButton,
   MenuItem,
@@ -26,47 +27,82 @@ import {
   ModalCloseButton,
   useDisclosure,
   Center,
+  Textarea,
+  HStack,
   Box,
   IconButton,
   useBreakpointValue,
+  Input,
+  Tooltip,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import useUser from "../hooks/useUser";
 import API_URL from "./apiurl";
 import { useState } from "react";
 import Slider from "react-slick";
-import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
+
+// carousel arrow
+function SampleNextArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{ ...style, right: 15, zIndex: 5 }}
+      onClick={onClick}
+    />
+  );
+}
+
+function SamplePrevArrow(props) {
+  const { className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{ ...style, left: 15, zIndex: 5 }}
+      onClick={onClick}
+    />
+  );
+}
 
 function Header() {
-  const router = useRouter();
+  // setting for react-slick
   const settings = {
-    dots: true,
-    arrows: false,
-    fade: true,
-    infinite: true,
-    autoplay: true,
+    dots: false,
+    infinite: false,
     speed: 500,
-    autoplaySpeed: 5000,
     slidesToShow: 1,
     slidesToScroll: 1,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
   };
-  const logoutHandler = () => {
-    Cookies.remove("token");
-    router.push("/login");
-  };
-  const { profilepic } = useUser();
 
+  const router = useRouter();
+
+  // button to logout
+  const logoutHandler = () => {
+    Cookies.remove("token"); //removing cookies
+    router.push("/login"); //push user back to login page
+  };
+
+  const { profilepic, username } = useUser();
+
+  // if user don't have any avatar uploaded yet, it will render default avatar
   const avatar = profilepic
     ? `${API_URL}${profilepic}`
     : `${API_URL}/avatar/default.jpg`;
 
+  //chakra ui modal for posting
   const {
     isOpen: isUploadopen,
     onOpen: onUploadopen,
     onClose: onUploadclose,
   } = useDisclosure();
+
+  const closeModal = () => {
+    Router.push("/");
+  };
 
   const [selectedImage, setselectedImage] = useState([]);
   console.log(selectedImage);
@@ -155,7 +191,7 @@ function Header() {
           <MenuIcon className="h-6 md:hidden cursor-pointer" />
           <div className="relative navBtn">
             <PaperAirplaneIcon className="navBtn rotate-45" />
-            <div className="absolute -top-1 -right-2 text-xs w-5 h-5 bg-red-500 rounded-full justify-center animate-pulse text-white">
+            <div className="absolute -top-1 -right-2 text-center text-xs w-5 h-5 bg-red-500 rounded-full justify-center animate-pulse text-white">
               10
             </div>
           </div>
@@ -184,44 +220,85 @@ function Header() {
       </div>
 
       {/* Modal upload image */}
-      <Modal isOpen={isUploadopen} onClose={onUploadclose} isCentered>
+      <Modal
+        isOpen={isUploadopen}
+        onClose={onUploadclose}
+        isCentered
+        scrollBehavior="inside"
+        closeOnOverlayClick={false}
+      >
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create New Post</ModalHeader>
-          <ModalCloseButton />
+        <ModalContent height={"2xl"}>
+          {/* <ModalHeader>Create a new post</ModalHeader> */}
           <ModalBody>
-            <Center>
-              <input
-                className="hidden"
-                type="file"
-                id="image"
-                onChange={onFileChange}
-              />
-              <label for="image">
-                <PhotographIcon className="hover:scale-105 hover:cursor-pointer transition-all duration-150 ease-out h-72" />
-              </label>
-              {selectedImage.map((val) => {
-                return (
+            <div>
+              <div>
+                <input
+                  className="hidden"
+                  type="file"
+                  id="image"
+                  onChange={onFileChange}
+                />
+                {!selectedImage.length ? (
+                  <div className="flex-col">
+                    <Tooltip label="Click me to upload your image">
+                      <label for="image">
+                        <PlusCircleIcon className="w-1/4 mx-auto my-20 hover:cursor-pointer hover:scale-105 transition-all duration-150 ease-out" />
+                      </label>
+                    </Tooltip>
+                  </div>
+                ) : null}
+                <Slider {...settings}>
+                  {selectedImage.map((val, index) => {
+                    return (
+                      <div className="relative mt-3">
+                        <div>
+                          <img
+                            src={URL.createObjectURL(val)}
+                            className="object-cover w-full aspect-square relative"
+                          />
+                        </div>
+                        {selectedImage.length < 4 ? (
+                          <label for="image">
+                            <PlusCircleIcon className="navBtn absolute left-9 top-3 text-white" />
+                          </label>
+                        ) : null}
+                        <MinusCircleIcon
+                          z={10}
+                          className="navBtn absolute left-3 top-3 text-white"
+                          onClick={() => {
+                            setselectedImage(
+                              selectedImage.filter((e) => e !== val)
+                            );
+                          }}
+                        />
+                        <div className="absolute top-3 right-3 text-xs w-5 h-5 bg-blue-600 rounded-full text-white text-center">
+                          {index + 1}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </Slider>
+              </div>
+              <div>
+                <div className="flex items-center gap-3">
                   <img
-                    src={URL.createObjectURL(val)}
-                    className="object-cover w-full aspect-square"
+                    className="w-10 h-10 object-cover rounded-full border p-[2px] "
+                    src={`${API_URL}${profilepic}`}
+                    alt=""
                   />
-                );
-              })}
-            </Center>
-
-            <Center>
-              <p className="text-4xl">Upload Photo</p>
-            </Center>
+                  <h2 className="font-semibold text-lg">{username}</h2>
+                </div>
+                <Textarea placeholder="write a caption..." className="mt-2" />
+              </div>
+            </div>
           </ModalBody>
-          <Center>
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={onUploadclose}>
-                Upload
-              </Button>
-              <Button variant="ghost">Next</Button>
-            </ModalFooter>
-          </Center>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onUploadclose}>
+              Cancel
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
       {/* Modal upload image */}
