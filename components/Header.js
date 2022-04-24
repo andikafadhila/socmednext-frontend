@@ -42,6 +42,8 @@ import useUser from "../hooks/useUser";
 import API_URL from "./apiurl";
 import { useState } from "react";
 import Slider from "react-slick";
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
 
 // carousel arrow
 function SampleNextArrow(props) {
@@ -108,6 +110,13 @@ function Header() {
   console.log(selectedImage);
 
   // postingan
+  const [inputCaption, setInputCaption] = useState("");
+
+  console.log(inputCaption);
+  const inputCaptionHandler = (e) => {
+    setInputCaption(e.target.value);
+  };
+
   const onFileChange = (e) => {
     // console.log("e.target.files[0]", e.target.files[0]);
     if (e.target.files[0]) {
@@ -120,21 +129,20 @@ function Header() {
       let token = Cookies.get("token");
       let formData = new FormData();
       let insertData = {
-        caption: caption,
+        caption: inputCaption,
       };
 
       for (let i = 0; i < selectedImage.length; i++) {
         formData.append(`image`, selectedImage[i]);
       }
-
-      await axios.all([
-        axios.put(`${API_URL}/edit`, formData, {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }),
-      ]);
-
+      formData.append("caption", insertData.caption);
+      console.log("iniformdata", formData);
+      await axios.post(`${API_URL}/post`, formData, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      setInputCaption("");
       await toast.success("Posting successfull!", {
         position: "top-right",
         autoClose: 3000,
@@ -289,12 +297,19 @@ function Header() {
                   />
                   <h2 className="font-semibold text-lg">{username}</h2>
                 </div>
-                <Textarea placeholder="write a caption..." className="mt-2" />
+                <Textarea
+                  placeholder="write a caption..."
+                  className="mt-2"
+                  onChange={inputCaptionHandler}
+                />
               </div>
             </div>
           </ModalBody>
 
           <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={submitPost}>
+              Post
+            </Button>
             <Button colorScheme="blue" mr={3} onClick={onUploadclose}>
               Cancel
             </Button>
@@ -302,6 +317,7 @@ function Header() {
         </ModalContent>
       </Modal>
       {/* Modal upload image */}
+      <ToastContainer />
     </div>
   );
 }
