@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import API_URL from "./apiurl";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Center, Spinner } from "@chakra-ui/react";
+import calculateTime from "../utils/calculateTime";
 
 function Posts() {
   // const [data, setData] = useState([]);
@@ -72,6 +73,7 @@ function Posts() {
           userImg={API_URL + post.profilepic}
           dataimg={post.photos} //ini isinya object data foto post
           numberOfLikes={post.number_of_likes}
+          createdAt={calculateTime(post.createdAt)}
           caption={post.caption}
         />
       ))}

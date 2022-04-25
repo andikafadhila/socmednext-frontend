@@ -39,7 +39,16 @@ function SamplePrevArrow(props) {
   );
 }
 
-function Post({ key, id, username, userImg, dataimg, caption }) {
+function Post({
+  key,
+  id,
+  username,
+  userImg,
+  dataimg,
+  caption,
+  createdAt,
+  numberOfLikes,
+}) {
   const settings = {
     dots: true,
     infinite: true,
@@ -83,12 +92,19 @@ function Post({ key, id, username, userImg, dataimg, caption }) {
         </div>
         <BookmarkIcon className="btn" />
       </div>
+      {/* Number of Likes */}
+      <p className="pl-5 pb-2 truncate">
+        <span className="font-semibold mr-1">{numberOfLikes} Likes</span>
+      </p>
       {/* Caption */}
-      <p className="p-5 truncate">
+      <p className="pl-5 pb-2 truncate">
         <span className="font-bold mr-1">{username} </span>
         {caption}
       </p>
-
+      {/* updatedAt */}
+      <p className="pl-5 pb-5 truncate">
+        <span className="font-thin mr-1">{createdAt} </span>
+      </p>
       {/* Comments */}
 
       {/* Input box */}

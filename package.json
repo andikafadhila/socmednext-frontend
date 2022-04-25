@@ -15,6 +15,7 @@
     "@heroicons/react": "^1.0.6",
     "axios": "^0.26.1",
     "bcrypt": "^5.0.1",
+    "dayjs": "^1.11.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "framer-motion": "^6.2.8",
