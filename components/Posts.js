@@ -6,13 +6,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 function Posts() {
   // const [data, setData] = useState([]);
-  const [posts, setPosts] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(0);
-  const limit = 10;
-  console.log("posts", posts);
-  console.log("page", page);
-  // const fetchData = async () => {
   //   try {
   //     let res = await axios.get(`${API_URL}/post/get-post`);
   //     setPosts(res.data);
@@ -25,6 +18,13 @@ function Posts() {
   //     console.log(error);
   //   }
   // };
+  const [posts, setPosts] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
+  const limit = 10;
+  console.log("posts", posts);
+  console.log("page", page);
+  // const fetchData = async () => {
 
   const fetchDataOnScroll = async () => {
     try {
@@ -69,17 +69,4 @@ function Posts() {
     </div>
   );
 }
-
-export const getServerSideProps = async (ctx) => {
-  try {
-    const res = await axios.get(`${API_URL}/post/get-post`, {
-      params: { page: 0 },
-    });
-
-    return { props: { postsData: res.data } };
-  } catch (error) {
-    return { props: { errorLoading: true } };
-  }
-};
-
 export default Posts;
