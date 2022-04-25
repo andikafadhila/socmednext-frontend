@@ -3,6 +3,7 @@ import Post from "./Post";
 import { useEffect, useRef, useState } from "react";
 import API_URL from "./apiurl";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Center, Spinner } from "@chakra-ui/react";
 
 function Posts() {
   // const [data, setData] = useState([]);
@@ -28,9 +29,9 @@ function Posts() {
 
   const fetchDataOnScroll = async () => {
     try {
-      const res = await axios.get(`${API_URL}/post/get-post`, {
-        params: { page, limit },
-      });
+      const res = await axios.get(
+        `${API_URL}/post/get-post?page=${page}&${limit}`
+      );
 
       if (res.data.length === 0) setHasMore(false);
       setPosts((prev) => [...prev, ...res.data]);
@@ -41,32 +42,40 @@ function Posts() {
     }
   };
 
-  useEffect(() => {
+  useEffect(async () => {
     fetchDataOnScroll();
   }, []);
 
+  const heloworld = () => {
+    return console.log("helloworld");
+  };
+
   return (
-    <div>
-      <InfiniteScroll
-        hasMore={hasMore}
-        next={fetchDataOnScroll}
-        loader={<div>Loading...</div>}
-        endMessage={<div>ga ada lagi bosku</div>}
-        dataLength={posts.length}
-      >
-        {posts.map((post) => (
-          <Post
-            key={post.id}
-            id={post.id}
-            username={post.username}
-            userImg={API_URL + post.profilepic}
-            dataimg={post.photos} //ini isinya object data foto post
-            numberOfLikes={post.number_of_likes}
-            caption={post.caption}
-          />
-        ))}
-      </InfiniteScroll>
-    </div>
+    <InfiniteScroll
+      hasMore={hasMore}
+      next={fetchDataOnScroll}
+      loader={
+        <Center>
+          <Spinner size="xl" />
+        </Center>
+      }
+      endMessage={
+        <p className="text-lg font-bold">dah bos, jangan scroll lagi</p>
+      }
+      dataLength={posts.length}
+    >
+      {posts.map((post) => (
+        <Post
+          key={post.id}
+          id={post.id}
+          username={post.username}
+          userImg={API_URL + post.profilepic}
+          dataimg={post.photos} //ini isinya object data foto post
+          numberOfLikes={post.number_of_likes}
+          caption={post.caption}
+        />
+      ))}
+    </InfiniteScroll>
   );
 }
 export default Posts;

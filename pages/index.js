@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 
 export default function Home() {
   return (
-    <div className="bg-gray-50 h-screen overflow-y-scroll scrollbar-hide">
+    <div className="bg-gray-50 scrollbar-hide">
       <Head>
         <title>PhotoLab</title>
         <link rel="rel" href="/favicon.ico" />

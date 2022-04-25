@@ -161,7 +161,7 @@ function Header() {
   };
 
   return (
-    <div className="shadow-sm border-b bg-white sticky top-0 z-10">
+    <div className="shadow-sm border-b bg-white sticky top-0 z-50">
       <div className="flex justify-between max-w-4xl bg-white mx-5 xl:mx-auto">
         {/* Left */}
         <div className="relative hidden lg:inline-grid w-24">
