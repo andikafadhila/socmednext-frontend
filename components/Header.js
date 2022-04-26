@@ -68,7 +68,7 @@ function SamplePrevArrow(props) {
   );
 }
 
-function Header() {
+function Header({ submitPostParent }) {
   // setting for react-slick
   const settings = {
     dots: false,
@@ -126,7 +126,6 @@ function Header() {
 
   const submitPost = async () => {
     try {
-      let token = Cookies.get("token");
       let formData = new FormData();
       let insertData = {
         caption: inputCaption,
@@ -137,26 +136,10 @@ function Header() {
       }
       formData.append("caption", insertData.caption);
       console.log("iniformdata", formData);
-      await axios.post(`${API_URL}/post`, formData, {
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+      await submitPostParent(formData);
       setInputCaption("");
-      await toast.success("Posting successfull!", {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        draggable: true,
-      });
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message || "network error", {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        draggable: true,
-      });
     }
   };
 
