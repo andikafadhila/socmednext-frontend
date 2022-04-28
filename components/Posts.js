@@ -6,35 +6,13 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { Center, Spinner } from "@chakra-ui/react";
 import calculateTime from "../utils/calculateTime";
 
-function Posts({ fetchDataOnScrollParent }) {
-  const [posts, setPosts] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(0);
-  const limit = 10;
+function Posts({ fetchDataOnScrollParent, posts, hasMore, page }) {
   console.log("posts", posts);
   console.log("page", page);
   // const fetchData = async () => {
 
   const fetchDataOnScroll = async () => {
-    try {
-      let res = await fetchDataOnScrollParent(page, limit);
-      console.log(res, "ini namanya res");
-      if (res.data.length === 0) setHasMore(false);
-      setPosts((prev) => [...prev, ...res.data]);
-      setPage((prev) => prev + 1);
-    } catch (error) {
-      console.log("Error fetching Posts");
-      console.log(error);
-    }
-  };
-
-  const fetchLastPost = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/post/get-post?page=0&limit=1`);
-      setPosts([res.data[0], ...posts]);
-    } catch (error) {
-      console.log(error);
-    }
+    return fetchDataOnScrollParent();
   };
 
   useEffect(async () => {

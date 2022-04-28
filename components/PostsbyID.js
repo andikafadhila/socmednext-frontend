@@ -1,37 +1,51 @@
-// import axios from "axios";
-// import Post from "./Post";
+import axios from "axios";
+import Post from "./Post";
+import { useEffect, useRef, useState } from "react";
+import API_URL from "./apiurl";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Center, Spinner } from "@chakra-ui/react";
+import calculateTime from "../utils/calculateTime";
 
-// function Posts() {
-//   const [data, setData] = useState([]);
+function Posts({ fetchDataOnScrollParent, posts, hasMore, page }) {
+  console.log("posts", posts);
+  console.log("page", page);
+  // const fetchData = async () => {
 
-//   const fetchData = async () => {
-//     try {
-//       let res = await axios.get("http://localhost:5000/post/get-post");
-//       setData(res.data);
-//       console.log(res.data);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
+  const fetchDataOnScroll = async () => {
+    return fetchDataOnScrollParent();
+  };
 
-//   useEffect(() => {
-//     fetchData();
-//   }, []);
+  useEffect(async () => {
+    fetchDataOnScroll();
+  }, []);
 
-//   return (
-//     <div>
-//       {data.map((post) => (
-//         <Post
-//           key={post.id}
-//           id={post.id}
-//           username={post.username}
-//           userImg={`http://localhost:5000${post.profilepic}`}
-//           img={post.img}
-//           caption={post.caption}
-//         />
-//       ))}
-//     </div>
-//   );
-// }
-
-// export default Posts;
+  return (
+    <InfiniteScroll
+      hasMore={hasMore}
+      next={fetchDataOnScroll}
+      loader={
+        <Center>
+          <Spinner size="xl" />
+        </Center>
+      }
+      endMessage={
+        <p className="text-lg font-bold">dah bos, jangan scroll lagi</p>
+      }
+      dataLength={posts.length}
+    >
+      {posts.map((post) => (
+        <Post
+          key={post.id}
+          id={post.id}
+          username={post.username}
+          userImg={API_URL + post.profilepic}
+          dataimg={post.photos} //ini isinya object data foto post
+          numberOfLikes={post.number_of_likes}
+          createdAt={calculateTime(post.createdAt)}
+          caption={post.caption}
+        />
+      ))}
+    </InfiniteScroll>
+  );
+}
+export default Posts;
