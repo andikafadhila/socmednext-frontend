@@ -11,10 +11,23 @@ import {
   BookmarkIcon,
   EmojiHappyIcon,
 } from "@heroicons/react/outline";
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
+  IconButton,
+} from "@chakra-ui/react";
 
 import { HeartIcon as HearIconFilled } from "@heroicons/react/solid";
 import API_URL from "./apiurl";
 import Slider from "react-slick";
+import Link from "next/link";
+import useUser from "../hooks/useUser";
 
 // carousel arrow
 function SampleNextArrow(props) {
@@ -48,6 +61,7 @@ function Post({
   caption,
   createdAt,
   numberOfLikes,
+  userId,
 }) {
   const settings = {
     dots: true,
@@ -58,6 +72,9 @@ function Post({
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
   };
+
+  const { id: logedinId } = useUser();
+
   return (
     <div className="bg-white my-7 border rounded-sm">
       {/* Header */}
@@ -68,17 +85,34 @@ function Post({
           alt=""
         />
         <p className="flex-1 font-bold">{username}</p>
-        <DotsHorizontalIcon className="h-5" />
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label="Options"
+            icon={<DotsHorizontalIcon className="h-5" />}
+            variant="ghost"
+          />
+          <MenuList>
+            {userId == logedinId ? (
+              <MenuItem textColor="red">Delete</MenuItem>
+            ) : null}
+          </MenuList>
+        </Menu>
       </div>
       {/* Img */}
       <Slider {...settings}>
         {dataimg.map((val) => {
           return (
-            <img
-              src={API_URL + val.image}
-              className="object-cover w-full aspect-square"
-              alt=""
-            />
+            <Link
+              href={`http://localhost:3000/post/${id}`}
+              className="hover:cursor-pointer"
+            >
+              <img
+                src={API_URL + val.image}
+                className="object-cover w-full aspect-square"
+                alt=""
+              />
+            </Link>
           );
         })}
       </Slider>

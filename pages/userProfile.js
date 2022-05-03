@@ -69,7 +69,7 @@ const profile = () => {
     try {
       let token = Cookies.get("token");
       const res = await axios.get(
-        `${API_URL}/post/get-post?page=${page}&limit=${limit}`,
+        `${API_URL}/post/get-post-byId?page=${page}&limit=${limit}`,
         {
           headers: {
             authorization: `Bearer ${token}`,

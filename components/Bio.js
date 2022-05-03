@@ -16,18 +16,19 @@ import {
   FormLabel,
   Input,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import useUser from "../hooks/useUser";
 import validator from "validator";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
 import { editAction } from "../redux/actions/userActions";
 import { connect, useSelector } from "react-redux";
 import API_URL from "../components/apiurl";
 import Cookies from "js-cookie";
 
 function Bio({ editAction }) {
+  const toast = useToast();
   const {
     isOpen: isAvatarOpen,
     onOpen: onAvatarOpen,
@@ -77,19 +78,21 @@ function Bio({ editAction }) {
         }),
       ]);
 
-      await toast.success("Update photo Successfull!", {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        draggable: true,
+      toast({
+        title: "Success!",
+        description: "Update photo Successfull!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
       });
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message || "network error", {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        draggable: true,
+      toast({
+        title: "error",
+        description: error.message || "network error",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
     }
   };
@@ -115,19 +118,21 @@ function Bio({ editAction }) {
         },
       });
 
-      toast.success("Avatar Deleted", {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        draggable: true,
+      toast({
+        title: "Success!",
+        description: "Avatar Deleted",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
       });
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message || "network error", {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        draggable: true,
+      toast({
+        title: "error",
+        description: error.response.data.message || "network error",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
       });
     }
   };
@@ -404,7 +409,6 @@ function Bio({ editAction }) {
         </ModalContent>
       </Modal>
       {/* Modal edit Bio and FullName */}
-      <ToastContainer />
     </div>
   );
 }

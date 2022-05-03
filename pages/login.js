@@ -46,32 +46,6 @@ const login = ({ loginAction }) => {
               email: e.target.username.value,
               password: e.target.password.value,
             });
-
-            // axios
-            //   .post("http://localhost:5000/auth/login", {
-            //     username: e.target.username.value,
-            //     email: e.target.username.value,
-            //     password: e.target.password.value,
-            //   })
-            //   .then((response) => {
-            //     console.log(response);
-            //     for (const key in response.data) {
-            //       localStorage.setItem(key, response.data[key]);
-            //     }
-            //     router.push("/");
-            //   })
-            //   .catch((error) => {
-            //     if (error.response) {
-            //       setError(error.response.data.message);
-            //     } else if (error.request) {
-            //       setError(
-            //         "We couldn't reach PhotoLab. Check your network connection."
-            //       );
-            //     } else {
-            //       setError("Something went wrong!");
-            //     }
-            //     console.log(error);
-            //     });
           }}
         >
           <FormControl display="flex" flexDirection="column">

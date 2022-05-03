@@ -11,18 +11,14 @@ function Posts({ fetchDataOnScrollParent, posts, hasMore, page }) {
   console.log("page", page);
   // const fetchData = async () => {
 
-  const fetchDataOnScroll = async () => {
-    return fetchDataOnScrollParent();
-  };
-
-  useEffect(async () => {
-    fetchDataOnScroll();
+  useEffect(() => {
+    fetchDataOnScrollParent();
   }, []);
 
   return (
     <InfiniteScroll
       hasMore={hasMore}
-      next={fetchDataOnScroll}
+      next={fetchDataOnScrollParent}
       loader={
         <Center>
           <Spinner size="xl" />
@@ -43,6 +39,8 @@ function Posts({ fetchDataOnScrollParent, posts, hasMore, page }) {
           numberOfLikes={post.number_of_likes}
           createdAt={calculateTime(post.createdAt)}
           caption={post.caption}
+          comments={post.comments} //isinya object data comment
+          userId={post.users_id}
         />
       ))}
     </InfiniteScroll>
