@@ -35,6 +35,13 @@ const postById = () => {
       console.log(res);
     } catch (error) {
       console.log(error);
+      toast({
+        title: "error",
+        description: error.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 
@@ -59,8 +66,8 @@ const postById = () => {
     } catch (error) {
       console.log(error);
       toast({
-        title: error,
-        description: error.message,
+        title: "error",
+        description: error.response.data.message,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -72,7 +79,7 @@ const postById = () => {
     let token = Cookies.get("token");
 
     try {
-      return await axios.post(
+      const res = await axios.post(
         `${API_URL}/post/comment-post?posts_id=${postId}`,
         { comment },
         {
@@ -81,28 +88,63 @@ const postById = () => {
           },
         }
       );
+      toast({
+        title: "Comment Posted!",
+        description: "You just comment this post.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      if (!comment.length) {
+        throw { message: "Please input your Comment." };
+      }
+      return res;
     } catch (error) {
-      console.log(error.message);
+      toast({
+        title: "error",
+        description: error.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     } finally {
       getPostByPostId();
     }
   };
 
-  const editCaptionParent = async (caption) => {
+  const editCaptionParent = async (editCaption) => {
     let token = Cookies.get("token");
 
     try {
-      return await axios.post(
-        `${API_URL}/post/comment-post?posts_id=${postId}`,
-        { comment },
+      const res = await axios.patch(
+        `${API_URL}/post/edit-post?id_posts=${postId}`,
+        { caption: editCaption },
         {
           headers: {
             authorization: `Bearer ${token}`,
           },
         }
       );
+      if (!editCaption.length) {
+        throw { message: "Please input your Caption." };
+      }
+      toast({
+        title: "Caption edited!",
+        description: "your post successfully edited.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+      return res;
     } catch (error) {
       console.log(error.message);
+      toast({
+        title: "error",
+        description: error.response.data.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     } finally {
       getPostByPostId();
     }
@@ -150,6 +192,7 @@ const postById = () => {
           commentPostParent={commentPostParent}
           alreadyLike={post.already_like}
           likePostParent={likePostParent}
+          editCaptionParent={editCaptionParent}
         />
       ))}
     </div>

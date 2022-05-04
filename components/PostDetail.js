@@ -87,6 +87,7 @@ const postDetail = ({
   commentPostParent,
   alreadyLike,
   likePostParent,
+  editCaptionParent,
 }) => {
   const toast = useToast();
   const settings = {
@@ -136,29 +137,11 @@ const postDetail = ({
   const commentPost = async (e) => {
     e.preventDefault();
     try {
-      if (!comment.length) {
-        throw { message: "Please input your Comment." };
-      }
       await commentPostParent(comment);
-      toast({
-        title: "Comment Posted!",
-        description: "You just comment this post.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
       setComment("");
       console.log("comment", comment);
     } catch (error) {
       console.log(error);
-      console.log(error.message);
-      toast({
-        title: "error",
-        description: error.message,
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
     }
   };
 
@@ -187,43 +170,24 @@ const postDetail = ({
     }
   };
 
-  // // Edit Function
+  // Edit Function
   const [canEdit, setCanEdit] = useState(false);
 
   const editButtonHandler = () => {
-    setCanEdit(true);
+    canEdit ? setCanEdit(false) : setCanEdit(true);
   };
 
-  // const [caption, setCaption] = useState("");
-  // console.log(caption);
-  // const editCaptionPost = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     if (!caption.length) {
-  //       throw { message: "Please input your Comment." };
-  //     }
-  //     await editCaptionParent(caption);
-  //     toast({
-  //       title: "Comment Posted!",
-  //       description: "You just caption this post.",
-  //       status: "success",
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //     setComment("");
-  //     console.log("caption", caption);
-  //   } catch (error) {
-  //     console.log(error);
-  //     console.log(error.message);
-  //     toast({
-  //       title: "error",
-  //       description: error.message,
-  //       status: "error",
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //   }
-  // };
+  const [editCaption, setEditCaption] = useState(caption);
+  console.log(editCaption);
+  const editCaptionPost = async (e) => {
+    e.preventDefault();
+    try {
+      await editCaptionParent(editCaption);
+      setCanEdit(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -290,9 +254,20 @@ const postDetail = ({
               <p className="font-normal text-md ml-16 pl-2 -mt-3">
                 {canEdit ? (
                   <div>
-                    <form action="">
-                      <Textarea w={"md"} />
-                      <Button className="-right-[23rem] mt-3">Submit</Button>
+                    <form action="" onSubmit={editCaptionPost}>
+                      <Textarea
+                        w={"md"}
+                        value={editCaption}
+                        onChange={(e) => {
+                          setEditCaption(e.target.value);
+                        }}
+                      />
+                      <div className="mt-3">
+                        <Button type="submit">Submit</Button>
+                        <Button className="ml-2" onClick={editButtonHandler}>
+                          Close
+                        </Button>
+                      </div>
                     </form>
                   </div>
                 ) : (
@@ -401,6 +376,16 @@ const postDetail = ({
                 }}
                 className="border-none flex-1 focus:ring-0 outline-none"
               />
+              {comment.length <= 300 ? (
+                <div className="text-sm font-extralight">
+                  {comment.length}/300
+                </div>
+              ) : (
+                <div className="text-sm font-light text-red-600">
+                  {comment.length}/300
+                </div>
+              )}
+
               <button className="font-semibold text-blue-400" type="submit">
                 Post
               </button>
