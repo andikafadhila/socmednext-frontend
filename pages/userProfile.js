@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
 import API_URL from "../components/apiurl";
+import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
+import { ViewGridIcon, HeartIcon } from "@heroicons/react/outline";
+
 const profile = () => {
   const [posts, setPosts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -13,6 +16,10 @@ const profile = () => {
   console.log(posts);
   console.log(hasMore);
   console.log(page);
+
+  const [likedPosts, setLikedPosts] = useState([]);
+  const [LikedHasMore, setLikedHasMore] = useState(true);
+  const [LikedPage, setLikedPage] = useState(0);
 
   const fetchLastPost = async () => {
     console.log(posts);
@@ -64,7 +71,7 @@ const profile = () => {
   };
 
   const fetchDataOnScrollParent = async () => {
-    console.log(page, "page");
+    console.log(posts, "posts");
     console.log(limit, "limit");
     try {
       let token = Cookies.get("token");
@@ -84,18 +91,67 @@ const profile = () => {
       console.log(error);
     }
   };
+
+  const fetchDataOnScrollParentLiked = async () => {
+    console.log(likedPosts, "likedPosts");
+    console.log(limit, "limit");
+    try {
+      let token = Cookies.get("token");
+      const res = await axios.get(
+        `${API_URL}/post/get-post-byAlreadyLiked?page=${page}&limit=${limit}`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.data.length === 0) setLikedHasMore(false);
+      setLikedPosts((prev) => [...prev, ...res.data]);
+      setLikedPage((prev) => prev + 1);
+    } catch (error) {
+      console.log("Error fetching Posts");
+      console.log(error);
+    }
+  };
+
   return (
     <div className="bg-gray-50">
       <Header submitPostParent={submitPostParent} />
       <Bio />
-      <div className="w-2/4 mx-auto">
-        <PostsbyID
-          fetchDataOnScrollParent={fetchDataOnScrollParent}
-          posts={posts}
-          hasMore={hasMore}
-          page={page}
-        />
-      </div>
+      <Tabs isFitted variant="enclosed">
+        <TabList mb="1em">
+          <Tab>
+            <ViewGridIcon className="w-4" />
+            Posts
+          </Tab>
+          <Tab>
+            <HeartIcon className="w-4" />
+            Loved
+          </Tab>
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <div className="w-2/4 mx-auto">
+              <PostsbyID
+                fetchDataOnScrollParent={fetchDataOnScrollParent}
+                posts={posts}
+                hasMore={hasMore}
+                page={page}
+              />
+            </div>
+          </TabPanel>
+          <TabPanel>
+            <div className="w-2/4 mx-auto">
+              <PostsbyID
+                fetchDataOnScrollParent={fetchDataOnScrollParentLiked}
+                posts={likedPosts}
+                hasMore={LikedHasMore}
+                page={LikedPage}
+              />
+            </div>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </div>
   );
 };

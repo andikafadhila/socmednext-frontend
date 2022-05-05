@@ -166,11 +166,6 @@ const login = () => {
               } catch (error) {
                 console.log(error.response.data.message || "network error");
               }
-              // .then((response) => {
-              //   localStorage.setItem("token", response.data.token);
-              //   localStorage.setItem("username", response.data.username);
-              //   history.push("/");
-              // });
             }
           }}
         >

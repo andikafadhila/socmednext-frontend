@@ -103,10 +103,7 @@ function Post({
       <Slider {...settings}>
         {dataimg.map((val) => {
           return (
-            <Link
-              href={`http://localhost:3000/post/${id}`}
-              className="hover:cursor-pointer"
-            >
+            <Link href={`/post/${id}`} className="hover:cursor-pointer">
               <img
                 src={API_URL + val.image}
                 className="object-cover w-full aspect-square"
