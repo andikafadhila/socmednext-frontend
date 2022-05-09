@@ -19,6 +19,7 @@ import PhotoLab from "../public/PhotoLab.png";
 import PhotoLabRegister from "../public/PhotoLabRegister.webp";
 import Image from "next/image";
 import Link from "next/link";
+import { toast, ToastContainer } from "react-toastify";
 
 const login = () => {
   const [usernameErrors, setUsernameErrors] = useState([]);
@@ -33,8 +34,10 @@ const login = () => {
 
   const [allValid, setAllValid] = useState(false);
 
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
+
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   // ===== Validate Username =====
 
@@ -78,10 +81,20 @@ const login = () => {
 
   const validatePassword = () => {
     const errors = [];
-    if (!validator.isLength(password, { min: 8, max: undefined })) {
-      errors.push("Passwords must be at least 8 characters.");
-    }
 
+    if (
+      !validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+    ) {
+      errors.push(
+        "Passwords must be at least 8 characters, including uppercase letter, a symbol, and a number."
+      );
+    }
     return errors;
   };
 
@@ -128,7 +141,7 @@ const login = () => {
 
   return (
     <Center h="100vh" className="bg-gray-50">
-      <Stack boxShadow="md" bg="whiteAlpha.900" p="20" rounded="md">
+      <Stack boxShadow="md" bg="whiteAlpha.900" p="20" rounded="md" w="90vh">
         <div className="w-64 mx-auto">
           <Image src={PhotoLab} />
         </div>
@@ -156,15 +169,27 @@ const login = () => {
               confirmPasswordErrors.length
             ) {
               console.log("check failed");
+              throw { message: "Check Error!" };
             } else {
               try {
-                axios.post("http://localhost:5000/auth/register", {
+                setButtonLoading(true);
+                console.log(buttonLoading, "try");
+                await axios.post("http://localhost:5000/auth/register", {
                   username,
                   password,
                   email,
                 });
+                toast.success("Register Success, please check your email!", {
+                  position: "top-right",
+                  autoClose: 3000,
+                  closeOnClick: true,
+                  draggable: true,
+                });
               } catch (error) {
                 console.log(error.response.data.message || "network error");
+              } finally {
+                console.log(buttonLoading, "finally");
+                setButtonLoading(false);
               }
             }
           }}
@@ -204,7 +229,11 @@ const login = () => {
                 width="xs"
               />
               {emailErrors.map((errors) => {
-                return <FormHelperText color="red">{errors}</FormHelperText>;
+                return (
+                  <FormHelperText color="red">
+                    <span className="whitespace-pre-line">{errors}</span>
+                  </FormHelperText>
+                );
               })}
               <InputGroup>
                 <Input
@@ -250,16 +279,31 @@ const login = () => {
           </FormControl>
           <br />
           <Stack>
-            <Button
-              disabled={!allValid}
-              type="submit"
-              colorScheme="red"
-              variant="solid"
-              width={20}
-              mx="auto"
-            >
-              Submit
-            </Button>
+            {!buttonLoading ? (
+              <Button
+                isLoading={false}
+                disabled={!allValid}
+                type="submit"
+                colorScheme="red"
+                variant="solid"
+                width={20}
+                mx="auto"
+              >
+                Submit
+              </Button>
+            ) : (
+              <Button
+                isLoading={true}
+                disabled={true}
+                type="submit"
+                colorScheme="red"
+                variant="solid"
+                width={20}
+                mx="auto"
+              >
+                Submit
+              </Button>
+            )}
           </Stack>
         </form>
 
@@ -272,6 +316,7 @@ const login = () => {
           </Text>
         </Stack>
       </Stack>
+      <ToastContainer />
     </Center>
   );
 };

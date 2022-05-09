@@ -2,7 +2,6 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import useUser from "../../hooks/useUser";
 import {
   Box,
@@ -20,12 +19,15 @@ import {
 } from "@chakra-ui/react";
 import PhotoLab from "../../public/PhotoLab.png";
 import Image from "next/image";
+import validator from "validator";
+import { ToastContainer, toast } from "react-toastify";
+import API_URL from "../../components/apiurl";
 
 const resetPassword = (props) => {
   const router = useRouter();
   const { token } = router.query;
   const [status, setstatus] = useState(1);
-  // const [loading, setloading] = useState(true);
+  const [loading, setloading] = useState(true);
   const { isLogin, username, id, email } = useUser();
   const dispatch = useDispatch();
   const [error, setError] = useState("");
@@ -35,22 +37,112 @@ const resetPassword = (props) => {
   const handleClickNew = () => setShowNew(!showNew);
   const [showNew, setShowNew] = useState(false);
 
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [passwordErrors, setPasswordErrors] = useState([]);
+  const [confirmPasswordErrors, setConfirmPasswordErrors] = useState([]);
+
+  const [allValid, setAllValid] = useState(false);
+
+  const validatePassword = () => {
+    const errors = [];
+    if (!validator.isLength(password, { min: 8, max: undefined })) {
+      errors.push("Passwords must be at least 8 characters.");
+    }
+
+    return errors;
+  };
+
+  const validateConfirmPassword = () => {
+    const errors = [];
+    if (confirmPassword !== password) {
+      errors.push("Passwords do not match.");
+    }
+    return errors;
+  };
+
+  useEffect(() => {
+    const validate = async () => {
+      const passwordErrors = validatePassword();
+      const confirmPasswordErrors = validateConfirmPassword();
+      if (passwordErrors.length || confirmPasswordErrors.length) {
+        setAllValid(false);
+      } else {
+        setAllValid(true);
+      }
+    };
+    validate();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username, email, password, confirmPassword]);
+
+  useEffect(() => {
+    setConfirmPasswordErrors(validateConfirmPassword());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmPassword]);
+
   // 0 loading 2: gagal 1:berhasil
   useEffect(async () => {
     try {
-      let res = await axios.get(`http://localhost:5000/auth/forget-password`, {
+      let res = await axios.get(`http://localhost:5000/auth/reset-password`, {
         headers: {
           authorization: `Bearer ${token}`,
         },
       });
+      console.log(res.data);
       setstatus(1);
     } catch (error) {
       console.log(error);
+      console.log(token);
+      console.log(error.response.data.message);
       setstatus(2);
     } finally {
       setloading(false);
     }
   }, []);
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    const passwordErrors = validatePassword();
+    const confirmPasswordErrors = validateConfirmPassword();
+
+    setPasswordErrors(passwordErrors);
+    setConfirmPasswordErrors(confirmPasswordErrors);
+    if (passwordErrors.length || confirmPasswordErrors.length) {
+      console.log("check failed");
+    } else {
+      try {
+        const res = await axios.post(
+          `${API_URL}/auth/newpassword`,
+          {
+            newPassword: password,
+          },
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        toast.success(res.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+          closeOnClick: true,
+          draggable: true,
+        });
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+        toast.error(error.response.data.message || "network error", {
+          position: "top-right",
+          autoClose: 3000,
+          closeOnClick: true,
+          draggable: true,
+        });
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -73,16 +165,7 @@ const resetPassword = (props) => {
           <Text fontSize="md" color="gray.600">
             Please retype your password.
           </Text>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault(); // Prevent default submission
-              loginAction({
-                username: e.target.username.value,
-                email: e.target.username.value,
-                password: e.target.password.value,
-              });
-            }}
-          >
+          <form onSubmit={submitHandler}>
             <FormControl display="flex" flexDirection="column">
               <Stack spacing={2} mx="auto">
                 <InputGroup>
@@ -94,6 +177,12 @@ const resetPassword = (props) => {
                     type={showNew ? "text" : "password"}
                     placeholder="New Password"
                     width="xs"
+                    onBlur={() => {
+                      setPasswordErrors(validatePassword());
+                    }}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
                   />
                   <InputRightElement width="4.5rem">
                     <Button h="1.75rem" size="sm" onClick={handleClickNew}>
@@ -101,6 +190,9 @@ const resetPassword = (props) => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+                {passwordErrors.map((errors) => {
+                  return <FormHelperText color="red">{errors}</FormHelperText>;
+                })}
                 <InputGroup>
                   <Input
                     size="md"
@@ -109,6 +201,12 @@ const resetPassword = (props) => {
                     type={show ? "text" : "password"}
                     placeholder="Retype Password"
                     width="xs"
+                    onBlur={() => {
+                      setConfirmPasswordErrors(validateConfirmPassword());
+                    }}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                    }}
                   />
                   <InputRightElement width="4.5rem">
                     <Button h="1.75rem" size="sm" onClick={handleClick}>
@@ -116,6 +214,9 @@ const resetPassword = (props) => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+                {confirmPasswordErrors.map((errors) => {
+                  return <FormHelperText color="red">{errors}</FormHelperText>;
+                })}
               </Stack>
             </FormControl>
             <br />
@@ -124,9 +225,9 @@ const resetPassword = (props) => {
                 colorScheme="red"
                 variant="solid"
                 type="submit"
-                disabled={false}
                 width={20}
                 mx="auto"
+                disabled={!allValid}
               >
                 Submit
               </Button>
@@ -137,16 +238,14 @@ const resetPassword = (props) => {
           </form>
           <Stack justify="center" color="gray.600" spacing="3">
             <Text as="div" textAlign="center">
-              <span>Don't have an account yet? </span>
+              <span>Wan to go to log in page? </span>
               <Button colorScheme="red" variant="link">
-                <Link href="/signup">Sign Up.</Link>
+                <Link href="/login">log in.</Link>
               </Button>
             </Text>
-            <Button colorScheme="red" variant="link">
-              Forgot password?
-            </Button>
           </Stack>
         </Stack>
+        <ToastContainer />
       </Center>
     );
   }

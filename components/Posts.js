@@ -7,10 +7,7 @@ import { Center, Spinner } from "@chakra-ui/react";
 import calculateTime from "../utils/calculateTime";
 
 function Posts({ fetchDataOnScrollParent, posts, hasMore, page }) {
-  console.log("posts", posts);
-  console.log("page", page);
-  // const fetchData = async () => {
-
+  console.log(posts);
   useEffect(() => {
     fetchDataOnScrollParent();
   }, []);
@@ -41,6 +38,7 @@ function Posts({ fetchDataOnScrollParent, posts, hasMore, page }) {
           caption={post.caption}
           comments={post.comments} //isinya object data comment
           userId={post.users_id}
+          alreadyLike={post.already_like}
         />
       ))}
     </InfiniteScroll>

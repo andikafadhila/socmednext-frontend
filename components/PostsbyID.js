@@ -43,6 +43,9 @@ function Posts({ fetchDataOnScrollParent, posts, hasMore, page }) {
           numberOfLikes={post.number_of_likes}
           createdAt={calculateTime(post.createdAt)}
           caption={post.caption}
+          comments={post.comments} //isinya object data comment
+          userId={post.users_id}
+          alreadyLike={post.already_like}
         />
       ))}
     </InfiniteScroll>

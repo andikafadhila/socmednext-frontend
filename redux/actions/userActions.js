@@ -57,6 +57,7 @@ export const editAction = ({ username, fullname, bio, id }, router) => {
           },
         }
       );
+      dispatch({ type: "UPDATE", payload: res.data.editData });
       console.log("res.data", res.data);
       console.log("res.headers", res.headers);
       toast.success("Edit Successfull!", {
@@ -67,8 +68,11 @@ export const editAction = ({ username, fullname, bio, id }, router) => {
       });
     } catch (error) {
       console.log(error);
-      dispatch({ type: "ERROR", payload: error.message || "network error" });
-      toast.error(error.message || "network error", {
+      dispatch({
+        type: "ERROR",
+        payload: error.response.data.message || "network error",
+      });
+      toast.error(error.response.data.message || "network error", {
         position: "top-right",
         autoClose: 3000,
         closeOnClick: true,

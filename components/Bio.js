@@ -23,12 +23,13 @@ import useUser from "../hooks/useUser";
 import validator from "validator";
 import axios from "axios";
 import { editAction } from "../redux/actions/userActions";
-import { connect, useSelector } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import API_URL from "../components/apiurl";
 import Cookies from "js-cookie";
 
 function Bio({ editAction }) {
   const toast = useToast();
+  const dispatch = useDispatch();
   const {
     isOpen: isAvatarOpen,
     onOpen: onAvatarOpen,
@@ -46,15 +47,16 @@ function Bio({ editAction }) {
   } = useDisclosure();
   const initialRef = React.useRef();
 
-  const { bio, fullname, profilepic, username, email, id } = useUser();
+  const { bio, fullname, profilepic, username, email, id, isVerified } =
+    useUser();
 
   const [usernameErrors, setUsernameErrors] = useState([]);
   const [fullnameErrors, setFullnameErrors] = useState([]);
   const [bioErrors, setBioErrors] = useState([]);
 
   const [editusername, setEditusername] = useState(username);
-  const [editfullname, setEditfullname] = useState(fullname);
-  const [editbio, setEditbio] = useState(bio);
+  const [editfullname, setEditfullname] = useState(fullname || "");
+  const [editbio, setEditbio] = useState(bio || "");
 
   const [allValid, setAllValid] = useState(false);
 
@@ -70,14 +72,11 @@ function Bio({ editAction }) {
       let formData = new FormData();
       formData.append("avatar", selectedImage.file);
 
-      await axios.all([
-        axios.put(`${API_URL}/edit`, formData, {
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        }),
-      ]);
-
+      let res = await axios.put(`${API_URL}/edit`, formData, {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
       toast({
         title: "Success!",
         description: "Update photo Successfull!",
@@ -85,11 +84,15 @@ function Bio({ editAction }) {
         duration: 3000,
         isClosable: true,
       });
+      console.log(res.data.imagePath);
+      dispatch({ type: "UPDATEPP", payload: res.data.imagePath });
+      onAvatarClose();
+      onEditavatarClose();
     } catch (error) {
       console.log(error);
       toast({
         title: "error",
-        description: error.message || "network error",
+        description: error.response.status.message || "network error",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -154,7 +157,7 @@ function Bio({ editAction }) {
 
   const validateFullname = () => {
     const errors = [];
-    if (!validator.isLength(editfullname, { min: 3, max: 25 })) {
+    if (!validator.isLength(editfullname, { min: 0, max: 25 })) {
       errors.push("fullname must be 3-25 characters.");
     }
     return errors;
@@ -202,7 +205,11 @@ function Bio({ editAction }) {
           <div className="flex-row mt-7">
             <div className="flex gap-3 items-center">
               <p className="font-thin text-3xl">@{username}</p>
-              <Button background="white" onClick={onEditOpen}>
+              <Button
+                background="white"
+                onClick={onEditOpen}
+                disabled={!isVerified}
+              >
                 Edit Profile
               </Button>
             </div>
@@ -330,11 +337,17 @@ function Bio({ editAction }) {
           <ModalCloseButton />
           <form
             onSubmit={async (e) => {
-              editAction({
-                username: e.target.editusername.value,
-                fullname: e.target.editfullname.value,
-                bio: e.target.editbio.value,
-              });
+              e.preventDefault();
+              try {
+                editAction({
+                  username: e.target.editusername.value,
+                  fullname: e.target.editfullname.value,
+                  bio: e.target.editbio.value,
+                });
+                onEditClose();
+              } catch (error) {
+                console.log(error);
+              }
             }}
           >
             <ModalBody pb={6}>

@@ -16,6 +16,10 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return { ...state, isLogin: true, error_mes: "", ...action.payload };
     case "ERROR":
       return { error_mes: action.payload };
+    case "UPDATE":
+      return { ...state, error_mes: "", ...action.payload };
+    case "UPDATEPP":
+      return { ...state, error_mes: "", profilepic: action.payload };
     case "LOGOUT":
       return INITIAL_STATE;
     default:

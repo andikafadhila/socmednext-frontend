@@ -44,6 +44,7 @@ import { useState } from "react";
 import Slider from "react-slick";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 
 // carousel arrow
 function SampleNextArrow(props) {
@@ -69,6 +70,9 @@ function SamplePrevArrow(props) {
 }
 
 function Header({ submitPostParent }) {
+  const { isVerified, isLogin } = useUser();
+  const dispatch = useDispatch();
+
   // setting for react-slick
   const settings = {
     dots: false,
@@ -83,9 +87,10 @@ function Header({ submitPostParent }) {
   const router = useRouter();
 
   // button to logout
-  const logoutHandler = () => {
+  const logoutHandler = async () => {
     Cookies.remove("token"); //removing cookies
-    router.push("/login"); //push user back to login page
+    await router.push("/login"); //push user back to login page
+    dispatch({ type: "LOGOUT" });
   };
 
   const { profilepic, username } = useUser();
@@ -140,6 +145,8 @@ function Header({ submitPostParent }) {
       setInputCaption("");
     } catch (error) {
       console.log(error);
+    } finally {
+      onUploadclose();
     }
   };
 
@@ -175,38 +182,52 @@ function Header({ submitPostParent }) {
         </div>
 
         {/* Right */}
-        <div className="flex items-center justify-end space-x-4">
-          <Link href="/">
-            <HomeIcon className="navBtn" />
-          </Link>
-          <MenuIcon className="h-6 md:hidden cursor-pointer" />
-          <div className="relative navBtn">
-            <PaperAirplaneIcon className="navBtn rotate-45" />
-            <div className="absolute -top-1 -right-2 text-center text-xs w-5 h-5 bg-red-500 rounded-full justify-center animate-pulse text-white">
-              10
-            </div>
-          </div>
 
-          <PlusCircleIcon className="navBtn" onClick={onUploadopen} />
-          <UserGroupIcon className="navBtn" />
-          <HeartIcon className="navBtn" />
-          <Menu>
-            <MenuButton as={Button} bg="white" rounded="full">
-              <img
-                src={avatar}
-                alt="profile picture"
-                className="h-10 w-10 object-cover rounded-full cursor-pointer"
-              />
-            </MenuButton>
-            <MenuList>
-              <Link href="/userProfile">
-                <MenuItem>Profile</MenuItem>
-              </Link>
-              <MenuItem color="red" onClick={logoutHandler}>
-                Sign Out
-              </MenuItem>
-            </MenuList>
-          </Menu>
+        <div className="flex items-center justify-end space-x-4">
+          {isLogin ? (
+            <>
+              {isVerified ? (
+                <>
+                  <Link href="/">
+                    <HomeIcon className="navBtn" />
+                  </Link>
+                  <MenuIcon className="h-6 md:hidden cursor-pointer" />
+                  <div className="relative navBtn">
+                    <PaperAirplaneIcon className="navBtn rotate-45" />
+                    <div className="absolute -top-1 -right-2 text-center text-xs w-5 h-5 bg-red-500 rounded-full justify-center animate-pulse text-white">
+                      10
+                    </div>
+                  </div>
+
+                  <PlusCircleIcon className="navBtn" onClick={onUploadopen} />
+                  <UserGroupIcon className="navBtn" />
+                  <HeartIcon className="navBtn" />
+                </>
+              ) : null}
+
+              <Menu>
+                <MenuButton as={Button} bg="white" rounded="full">
+                  <img
+                    src={avatar}
+                    alt="profile picture"
+                    className="h-10 w-10 object-cover rounded-full cursor-pointer"
+                  />
+                </MenuButton>
+                <MenuList>
+                  <Link href="/userProfile">
+                    <MenuItem>Profile</MenuItem>
+                  </Link>
+                  <MenuItem color="red" onClick={logoutHandler}>
+                    Sign Out
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            </>
+          ) : (
+            <Link href="/login">
+              <Button type="link">Log in</Button>
+            </Link>
+          )}
         </div>
       </div>
 

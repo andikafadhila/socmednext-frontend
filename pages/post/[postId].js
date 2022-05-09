@@ -7,6 +7,7 @@ import API_URL from "../../components/apiurl";
 import Header from "../../components/Header";
 import Post from "../../components/Post";
 import PostDetail from "../../components/PostDetail";
+import useUser from "../../hooks/useUser";
 import calculateTime from "../../utils/calculateTime";
 
 const postById = () => {
@@ -19,11 +20,13 @@ const postById = () => {
   const [postDetailData, setPostDetailData] = useState([]);
   console.log("postDetailData", postDetailData);
 
+  const { id } = useUser();
+
   const getPostByPostId = async () => {
     let token = Cookies.get("token");
     try {
       const res = await axios.get(
-        `${API_URL}/post/get-post-byPostId?postId=${postId}`,
+        `${API_URL}/post/get-post-byPostId?postId=${postId}&id=${id}`,
         {
           headers: {
             authorization: `Bearer ${token}`,
