@@ -108,12 +108,13 @@ function Post({
         </div>
         {/* Img */}
         <Slider {...settings}>
-          {dataimg.map((val) => {
+          {dataimg.map((val, i) => {
             return (
               <img
                 src={API_URL + val.image}
                 className="object-cover w-full aspect-square"
                 alt=""
+                key={i}
               />
             );
           })}

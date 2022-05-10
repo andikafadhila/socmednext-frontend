@@ -1,6 +1,7 @@
 import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import API_URL from "../../components/apiurl";
@@ -10,7 +11,7 @@ import PostDetail from "../../components/PostDetail";
 import useUser from "../../hooks/useUser";
 import calculateTime from "../../utils/calculateTime";
 
-const postById = () => {
+const PostById = () => {
   const router = useRouter();
   const { postId } = router.query;
   postId = parseInt(postId);
@@ -178,6 +179,28 @@ const postById = () => {
 
   return (
     <div className="bg-gray-50 scrollbar-hide">
+      <Head>
+        <title>Photo Lab</title>
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="description" content="Checkout our cool page" key="desc" />
+        <meta
+          property="og:title"
+          content="Social Title for Cool ini yang di post"
+        />
+        <meta
+          property="og:description"
+          content="And a social description for our cool page"
+        />
+        <meta
+          property="twitter:image"
+          content="https://foto.wartaekonomi.co.id/files/arsip_foto_2019_11_16/otomotif_215524_small.jpg"
+        />
+        <meta property="twitter:title" content="some title" />
+        <meta
+          property="og:image"
+          content="https://foto.wartaekonomi.co.id/files/arsip_foto_2019_11_16/otomotif_215524_small.jpg"
+        />
+      </Head>
       <Header />
       {postDetailData.map((post) => (
         <PostDetail
@@ -208,4 +231,4 @@ export async function getServerSideProps() {
   };
 }
 
-export default postById;
+export default PostById;

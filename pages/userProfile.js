@@ -8,7 +8,7 @@ import API_URL from "../components/apiurl";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import { ViewGridIcon, HeartIcon } from "@heroicons/react/outline";
 
-const profile = () => {
+const Profile = () => {
   const [posts, setPosts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
@@ -156,4 +156,4 @@ const profile = () => {
   );
 };
 
-export default profile;
+export default Profile;

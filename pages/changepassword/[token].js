@@ -23,7 +23,7 @@ import validator from "validator";
 import { ToastContainer, toast } from "react-toastify";
 import API_URL from "../../components/apiurl";
 
-const resetPassword = (props) => {
+const ResetPassword = (props) => {
   const router = useRouter();
   const { token } = router.query;
   const [status, setstatus] = useState(1);
@@ -190,8 +190,12 @@ const resetPassword = (props) => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
-                {passwordErrors.map((errors) => {
-                  return <FormHelperText color="red">{errors}</FormHelperText>;
+                {passwordErrors.map((errors, i) => {
+                  return (
+                    <FormHelperText color="red" key={i}>
+                      {errors}
+                    </FormHelperText>
+                  );
                 })}
                 <InputGroup>
                   <Input
@@ -214,8 +218,12 @@ const resetPassword = (props) => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
-                {confirmPasswordErrors.map((errors) => {
-                  return <FormHelperText color="red">{errors}</FormHelperText>;
+                {confirmPasswordErrors.map((errors, i) => {
+                  return (
+                    <FormHelperText color="red" key={i}>
+                      {errors}
+                    </FormHelperText>
+                  );
                 })}
               </Stack>
             </FormControl>
@@ -271,4 +279,4 @@ export async function getServerSideProps() {
   };
 }
 
-export default resetPassword;
+export default ResetPassword;

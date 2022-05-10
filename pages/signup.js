@@ -21,7 +21,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast, ToastContainer } from "react-toastify";
 
-const login = () => {
+const SignUp = () => {
   const [usernameErrors, setUsernameErrors] = useState([]);
   const [emailErrors, setEmailErrors] = useState([]);
   const [passwordErrors, setPasswordErrors] = useState([]);
@@ -210,8 +210,12 @@ const login = () => {
                 placeholder="Username"
                 width="xs"
               />
-              {usernameErrors.map((errors) => {
-                return <FormHelperText color="red">{errors}</FormHelperText>;
+              {usernameErrors.map((errors, i) => {
+                return (
+                  <FormHelperText color="red" key={i}>
+                    {errors}
+                  </FormHelperText>
+                );
               })}
               <Input
                 novalidate
@@ -228,9 +232,9 @@ const login = () => {
                 placeholder="Email"
                 width="xs"
               />
-              {emailErrors.map((errors) => {
+              {emailErrors.map((errors, i) => {
                 return (
-                  <FormHelperText color="red">
+                  <FormHelperText color="red" key={i}>
                     <span className="whitespace-pre-line">{errors}</span>
                   </FormHelperText>
                 );
@@ -256,8 +260,12 @@ const login = () => {
                   </Button>
                 </InputRightElement>
               </InputGroup>
-              {passwordErrors.map((errors) => {
-                return <FormHelperText color="red">{errors}</FormHelperText>;
+              {passwordErrors.map((errors, i) => {
+                return (
+                  <FormHelperText color="red" key={i}>
+                    {errors}
+                  </FormHelperText>
+                );
               })}
               <Input
                 onBlur={() => {
@@ -272,8 +280,12 @@ const login = () => {
                 placeholder="Confirm Password"
                 width="xs"
               />
-              {confirmPasswordErrors.map((errors) => {
-                return <FormHelperText color="red">{errors}</FormHelperText>;
+              {confirmPasswordErrors.map((errors, i) => {
+                return (
+                  <FormHelperText color="red" key={i}>
+                    {errors}
+                  </FormHelperText>
+                );
               })}
             </Stack>
           </FormControl>
@@ -311,7 +323,7 @@ const login = () => {
           <Text as="div" textAlign="center">
             <span>Already have an account?</span>
             <Button colorScheme="red" variant="link">
-              <Link href="/login">Log In.</Link>
+              <Link href="/L">Log In.</Link>
             </Button>
           </Text>
         </Stack>
@@ -321,4 +333,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default SignUp;

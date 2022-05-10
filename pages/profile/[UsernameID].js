@@ -2,7 +2,7 @@ import Header from "../../components/Header";
 import Bio from "../../components/Bio";
 import { useRouter } from "next/router";
 
-const profile = () => {
+const Profile = () => {
   const router = useRouter();
 
   return (
@@ -13,4 +13,4 @@ const profile = () => {
   );
 };
 
-export default profile;
+export default Profile;

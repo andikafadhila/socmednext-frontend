@@ -81,7 +81,7 @@ function SamplePrevArrow(props) {
   );
 }
 
-const postDetail = ({
+const PostDetail = ({
   key,
   id,
   username,
@@ -208,25 +208,18 @@ const postDetail = ({
 
   return (
     <>
-      <Head>
-        <title>Photo Lab</title>
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          property="twitter:image"
-          content="https://foto.wartaekonomi.co.id/files/arsip_foto_2019_11_16/otomotif_215524_small.jpg"
-        />
-      </Head>
       <div>
         <div className="bg-white mt-7 mx-14 border rounded-r-lg grid grid-cols-2">
           {/* Img */}
           <div className="col-span-1">
             <Slider {...settings}>
-              {dataimg.map((val) => {
+              {dataimg.map((val, i) => {
                 return (
                   <img
                     src={API_URL + val.image}
                     className="object-cover w-full aspect-square"
                     alt=""
+                    key={i}
                   />
                 );
               })}
@@ -306,9 +299,9 @@ const postDetail = ({
 
               {/* Comments */}
 
-              {comments.slice(0, commentToShow).map((val) => {
+              {comments.slice(0, commentToShow).map((val, i) => {
                 return (
-                  <div>
+                  <div key={i}>
                     <div className="flex items-center pl-5 py-1">
                       <img
                         src={API_URL + val.profilepic}
@@ -341,7 +334,9 @@ const postDetail = ({
                   Show More
                 </Button>
               ) : null}
-              {commentToShow === comments.length && comments.length !== 0 ? (
+              {commentToShow === comments.length &&
+              comments.length !== 0 &&
+              comments.length !== 5 ? (
                 <Button
                   onClick={showless}
                   variant="link"
@@ -494,7 +489,9 @@ const postDetail = ({
               </WhatsappShareButton>
               <Divider />
               <Center>
-                <FacebookShareButton url={`http://localhost:3000/post/${id}`}>
+                <FacebookShareButton
+                  url={`https://e99b-2001-448a-2002-bd9c-3d84-561f-7e6-12f4.ap.ngrok.io/post/44`}
+                >
                   <Link>fezbuk</Link>
                 </FacebookShareButton>
               </Center>
@@ -536,11 +533,11 @@ const postDetail = ({
   );
 };
 
-export async function getServerSideProps() {
-  // return the properties so they are available in the `Index` component
-  return {
-    props: {},
-  };
-}
+// export async function getServerSideProps() {
+//   // return the properties so they are available in the `Index` component
+//   return {
+//     props: {},
+//   };
+// }
 
-export default postDetail;
+export default PostDetail;

@@ -254,7 +254,7 @@ function Header({ submitPostParent }) {
                 {!selectedImage.length ? (
                   <div className="flex-col">
                     <Tooltip label="Click me to upload your image">
-                      <label for="image">
+                      <label htmlFor="image">
                         <PlusCircleIcon className="w-1/4 mx-auto my-20 hover:cursor-pointer hover:scale-105 transition-all duration-150 ease-out" />
                       </label>
                     </Tooltip>
@@ -263,7 +263,7 @@ function Header({ submitPostParent }) {
                 <Slider {...settings}>
                   {selectedImage.map((val, index) => {
                     return (
-                      <div className="relative mt-3">
+                      <div className="relative mt-3" key={index}>
                         <div>
                           <img
                             src={URL.createObjectURL(val)}
@@ -271,7 +271,7 @@ function Header({ submitPostParent }) {
                           />
                         </div>
                         {selectedImage.length < 4 ? (
-                          <label for="image">
+                          <label htmlFor="image">
                             <PlusCircleIcon className="navBtn absolute left-9 top-3 text-white" />
                           </label>
                         ) : null}

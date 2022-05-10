@@ -277,33 +277,33 @@ function Bio({ editAction }) {
                 id="avatar"
                 onChange={onFileChange}
               />
-              <label for="avatar">
+              <label htmlFor="avatar">
                 {profilepic && selectedImage.filePreview ? (
                   <img
                     src={selectedImage.filePreview}
                     className="h-48 w-48 object-cover rounded-full cursor-pointer"
-                    for="avatar"
+                    htmlFor="avatar"
                   />
                 ) : null}
                 {!profilepic && selectedImage.filePreview ? (
                   <img
                     src={selectedImage.filePreview}
                     className="h-48 w-48 object-cover rounded-full cursor-pointer"
-                    for="avatar"
+                    htmlFor="avatar"
                   />
                 ) : null}
                 {profilepic && !selectedImage.filePreview ? (
                   <img
                     src={avatar}
                     className="h-48 w-48 object-cover rounded-full cursor-pointer"
-                    for="avatar"
+                    htmlFor="avatar"
                   />
                 ) : null}
                 {!profilepic && !selectedImage.filePreview ? (
                   <img
                     src={avatar}
                     className="h-48 w-48 object-cover rounded-full cursor-pointer"
-                    for="avatar"
+                    htmlFor="avatar"
                   />
                 ) : null}
               </label>
@@ -315,7 +315,7 @@ function Bio({ editAction }) {
               colorScheme="blue"
               mr={3}
               onClick={submitPhoto}
-              for="profilePic"
+              htmlFor="profilePic"
             >
               Save
             </Button>
@@ -365,8 +365,12 @@ function Bio({ editAction }) {
                     setUsernameErrors(await validateUsername());
                   }}
                 />
-                {usernameErrors.map((errors) => {
-                  return <FormHelperText color="red">{errors}</FormHelperText>;
+                {usernameErrors.map((errors, i) => {
+                  return (
+                    <FormHelperText color="red" key={i}>
+                      {errors}
+                    </FormHelperText>
+                  );
                 })}
               </FormControl>
 
@@ -383,8 +387,12 @@ function Bio({ editAction }) {
                     setFullnameErrors(validateFullname());
                   }}
                 />
-                {fullnameErrors.map((errors) => {
-                  return <FormHelperText color="red">{errors}</FormHelperText>;
+                {fullnameErrors.map((errors, i) => {
+                  return (
+                    <FormHelperText color="red" key={i}>
+                      {errors}
+                    </FormHelperText>
+                  );
                 })}
               </FormControl>
 
@@ -401,8 +409,12 @@ function Bio({ editAction }) {
                     setBioErrors(validateBio());
                   }}
                 />
-                {bioErrors.map((errors) => {
-                  return <FormHelperText color="red">{errors}</FormHelperText>;
+                {bioErrors.map((errors, i) => {
+                  return (
+                    <FormHelperText color="red" key={i}>
+                      {errors}
+                    </FormHelperText>
+                  );
                 })}
               </FormControl>
             </ModalBody>

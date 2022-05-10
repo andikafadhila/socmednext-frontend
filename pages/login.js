@@ -33,7 +33,7 @@ import { ToastContainer, toast } from "react-toastify";
 import API_URL from "../components/apiurl";
 import validator from "validator";
 
-const login = ({ loginAction }) => {
+const Login = ({ loginAction }) => {
   const [error, setError] = useState("");
   const [emailForget, setEmailForget] = useState("");
   const router = useRouter();
@@ -162,7 +162,7 @@ const login = ({ loginAction }) => {
         </form>
         <Stack justify="center" color="gray.600" spacing="3">
           <Text as="div" textAlign="center">
-            <span>Don't have an account yet? </span>
+            <span>Don&apos;t have an account yet? </span>
             <Button colorScheme="red" variant="link">
               <Link href="/signup">Sign Up.</Link>
             </Button>
@@ -211,4 +211,4 @@ const login = ({ loginAction }) => {
   );
 };
 
-export default connect(null, { loginAction })(login);
+export default connect(null, { loginAction })(Login);
