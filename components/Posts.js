@@ -22,7 +22,7 @@ function Posts({ fetchDataOnScrollParent, posts, hasMore, page }) {
         </Center>
       }
       endMessage={
-        <p className="text-lg font-bold">dah bos, jangan scroll lagi</p>
+        <p className="text-lg font-bold text-center">There is nothing here.</p>
       }
       dataLength={posts.length}
     >

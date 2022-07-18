@@ -402,6 +402,7 @@ const PostDetail = ({
                       placeholder="Add a comment..."
                       name="comment"
                       id="comment"
+                      value={comment}
                       onChange={(e) => {
                         setComment(e.target.value);
                       }}
@@ -480,24 +481,30 @@ const PostDetail = ({
           <ModalOverlay />
           <ModalContent>
             <ModalHeader>
-              <Center>Delete Post?</Center>
+              <Center>Share Post with...</Center>
             </ModalHeader>
             <ModalBody>
               <Divider />
-              <WhatsappShareButton url={`http://localhost:3000/post/${id}`}>
-                <Link>wazap</Link>
-              </WhatsappShareButton>
+              <Center>
+                <WhatsappShareButton
+                  url={`https://5736-2001-448a-2002-bd9c-bc45-5640-15e0-a6b3.ap.ngrok.io/post/${id}`}
+                >
+                  <Link>Whatssapp</Link>
+                </WhatsappShareButton>
+              </Center>
               <Divider />
               <Center>
                 <FacebookShareButton
-                  url={`https://e99b-2001-448a-2002-bd9c-3d84-561f-7e6-12f4.ap.ngrok.io/post/44`}
+                  url={`https://5736-2001-448a-2002-bd9c-bc45-5640-15e0-a6b3.ap.ngrok.io/post/${id}`}
                 >
-                  <Link>fezbuk</Link>
+                  <Link>Facebook</Link>
                 </FacebookShareButton>
               </Center>
               <Divider />
               <Center>
-                <TwitterShareButton url={`http://localhost:3000/post/${id}`}>
+                <TwitterShareButton
+                  url={`https://5736-2001-448a-2002-bd9c-bc45-5640-15e0-a6b3.ap.ngrok.io/post/${id}`}
+                >
                   <Link>twitter</Link>
                 </TwitterShareButton>
               </Center>
@@ -509,6 +516,13 @@ const PostDetail = ({
                     navigator.clipboard.writeText(
                       `http://localhost:3000/post/${id}`
                     );
+                    toast({
+                      title: "Success",
+                      description: "Coppy to clipboard!",
+                      status: "success",
+                      duration: 3000,
+                      isClosable: true,
+                    });
                   }}
                 >
                   Copy link to clipboard

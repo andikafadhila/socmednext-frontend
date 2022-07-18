@@ -3,8 +3,13 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import useUser from "../../hooks/useUser";
+import Image from "next/image";
+import PhotoLab from "../../public/PhotoLab.png";
+import { ToastContainer, toast } from "react-toastify";
+
+import { Button, Center, Stack, Text } from "@chakra-ui/react";
+import API_URL from "../../components/apiurl";
 
 const Verified = (props) => {
   const router = useRouter();
@@ -13,6 +18,7 @@ const Verified = (props) => {
   const [loading, setloading] = useState(true);
   const { isLogin, username, id, email } = useUser();
   const dispatch = useDispatch();
+  console.log(token);
   // 0 loading 2: gagal 1:berhasil
   useEffect(async () => {
     try {
@@ -35,16 +41,21 @@ const Verified = (props) => {
   const sendEmail = async () => {
     try {
       setloading(true);
-      await axios.post(`${API_URL}/auth/sendemail-verified`, {
-        id: id,
-        username,
-      });
-      toast.success("berhasil kirim email", {
+      const res = await axios.post(
+        `${API_URL}/auth/resendemail-verified`,
+        null,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success("Check your email", {
         position: "top-right",
       });
     } catch (error) {
       console.log(error);
-      toast.error("gagal kirim", {
+      toast.error(error.response.data.image, {
         position: "top-right",
       });
     } finally {
@@ -62,27 +73,52 @@ const Verified = (props) => {
 
   if (status === 1) {
     return (
-      <div className="flex justify-center items-center">
-        <div>yeayy berhasill verified</div>
-        <div>
-          <Link href="/login">sini login</Link>
-        </div>
-      </div>
+      <Center h="100vh" className="bg-gray-50">
+        <Stack boxShadow="md" bg="whiteAlpha.900" p="20" rounded="md">
+          <div className="w-64 mx-auto">
+            <Image src={PhotoLab} />
+          </div>
+          <Center>
+            <Text fontSize="2xl" fontWeight="bold">
+              Your Account is verified!
+            </Text>
+          </Center>
+
+          <Stack justify="center" color="gray.600" spacing="3">
+            <Text as="div" textAlign="center">
+              <span>Please login here </span>
+              <Button colorScheme="red" variant="link">
+                <Link href="/login">log in.</Link>
+              </Button>
+            </Text>
+          </Stack>
+        </Stack>
+      </Center>
     );
   }
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div>gagal verified</div>
-      <div>
-        {/* {kalo belum login jangan sediakan button} */}
-        {isLogin ? (
-          <button className="bg-slate-300" onClick={sendEmail}>
-            kriim ulang bro
-          </button>
-        ) : null}
-      </div>
-    </div>
+    <Center h="100vh" className="bg-gray-50">
+      <Stack boxShadow="md" bg="whiteAlpha.900" p="20" rounded="md">
+        <div className="w-64 mx-auto">
+          <Image src={PhotoLab} />
+        </div>
+        <Center>
+          <Text fontSize="2xl" fontWeight="bold">
+            Your Account failed to verified!
+          </Text>
+        </Center>
+        <Stack justify="center" color="gray.600" spacing="3">
+          <Text as="div" textAlign="center">
+            <span>Resend verification Email? </span>
+            <Button colorScheme="red" variant="link">
+              <Link onClick={sendEmail}>Send Email.</Link>
+            </Button>
+          </Text>
+        </Stack>
+      </Stack>
+      <ToastContainer />
+    </Center>
   );
 };
 

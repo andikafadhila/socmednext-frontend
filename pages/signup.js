@@ -208,7 +208,7 @@ const SignUp = () => {
                 id="Username"
                 type="Username"
                 placeholder="Username"
-                width="xs"
+                width="md"
               />
               {usernameErrors.map((errors, i) => {
                 return (
@@ -230,7 +230,7 @@ const SignUp = () => {
                 id="Email"
                 type="Email"
                 placeholder="Email"
-                width="xs"
+                width="md"
               />
               {emailErrors.map((errors, i) => {
                 return (
@@ -252,7 +252,7 @@ const SignUp = () => {
                   id="Password"
                   type={show ? "text" : "password"}
                   placeholder="Password"
-                  width="xs"
+                  width="md"
                 />
                 <InputRightElement width="4.5rem">
                   <Button h="1.75rem" size="sm" onClick={handleClick}>
@@ -278,7 +278,7 @@ const SignUp = () => {
                 id="Confirm Password"
                 type="Password"
                 placeholder="Confirm Password"
-                width="xs"
+                width="md"
               />
               {confirmPasswordErrors.map((errors, i) => {
                 return (
@@ -323,7 +323,7 @@ const SignUp = () => {
           <Text as="div" textAlign="center">
             <span>Already have an account?</span>
             <Button colorScheme="red" variant="link">
-              <Link href="/L">Log In.</Link>
+              <Link href="/login">Log In.</Link>
             </Button>
           </Text>
         </Stack>

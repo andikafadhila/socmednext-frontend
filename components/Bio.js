@@ -60,6 +60,31 @@ function Bio({ editAction }) {
 
   const [allValid, setAllValid] = useState(false);
 
+  const [postNumber, setPostNumber] = useState(0);
+
+  const fetchDataOnScrollParent = async () => {
+    try {
+      let token = Cookies.get("token");
+      const res = await axios.get(
+        `${API_URL}/post/get-post-byId?page=0&limit=1000`,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(res.data);
+      setPostNumber(res.data.length);
+    } catch (error) {
+      console.log("Error fetching Posts");
+      console.log(error);
+    }
+  };
+
+  useEffect(async () => {
+    await fetchDataOnScrollParent();
+  }, []);
+
   //change profile picture
   const [selectedImage, setselectedImage] = useState({
     file: [],
@@ -92,7 +117,7 @@ function Bio({ editAction }) {
       console.log(error);
       toast({
         title: "error",
-        description: error.response.status.message || "network error",
+        description: error.message || "network error",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -215,7 +240,7 @@ function Bio({ editAction }) {
             </div>
             <div className="flex my-3">
               <div className="font-semibold">Posts</div>
-              <div className="ml-3">100</div>
+              <div className="ml-3">{postNumber}</div>
             </div>
             <div className="font-bold text-lg">{fullname}</div>
             <div className="font-extralight text-sm">{email}</div>

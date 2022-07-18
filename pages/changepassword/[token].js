@@ -102,6 +102,33 @@ const ResetPassword = (props) => {
     }
   }, []);
 
+  const sendEmail = async () => {
+    try {
+      setloading(true);
+      console.log(token);
+      const res = await axios.post(
+        `${API_URL}/auth/sendemail-resetpassword`,
+        null,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      router.push("/login");
+      toast.success("Check your email", {
+        position: "top-right",
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.image, {
+        position: "top-right",
+      });
+    } finally {
+      setloading(false);
+    }
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
 
@@ -147,7 +174,7 @@ const ResetPassword = (props) => {
   if (loading) {
     return (
       <div className="mx-auto my-auto">
-        <div>Loading bro....</div>
+        <div>Loading....</div>
       </div>
     );
   }
@@ -259,17 +286,46 @@ const ResetPassword = (props) => {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div>gagal verified</div>
-      <div>
-        {/* {kalo belum login jangan sediakan button} */}
-        {isLogin ? (
-          <button className="bg-slate-300" onClick={sendEmail}>
-            kriim ulang bro
-          </button>
-        ) : null}
-      </div>
-    </div>
+    <Center h="100vh" className="bg-gray-50">
+      <Stack boxShadow="md" bg="whiteAlpha.900" p="20" rounded="md">
+        <div className="w-64 mx-auto">
+          <Image src={PhotoLab} />
+        </div>
+        <Center>
+          <Text fontSize="2xl" fontWeight="bold">
+            Token Expired!
+          </Text>
+        </Center>
+        <Stack justify="center" color="gray.600" spacing="3">
+          <Text as="div" textAlign="center">
+            <span>Resend Reset Password Email? </span>
+            <Button colorScheme="red" variant="link">
+              <Link onClick={sendEmail}>Send Email.</Link>
+            </Button>
+          </Text>
+        </Stack>
+        {/* {isLogin ? (
+          <Stack justify="center" color="gray.600" spacing="3">
+            <Text as="div" textAlign="center">
+              <span>Resend Reset Password Email? </span>
+              <Button colorScheme="red" variant="link">
+                <Link onClick={sendEmail}>Send Email.</Link>
+              </Button>
+            </Text>
+          </Stack>
+        ) : (
+          <Stack justify="center" color="gray.600" spacing="3">
+            <Text as="div" textAlign="center">
+              <span>Back to Login page? </span>
+              <Button colorScheme="red" variant="link">
+                <Link href="/login">Login.</Link>
+              </Button>
+            </Text>
+          </Stack>
+        )} */}
+      </Stack>
+      <ToastContainer />
+    </Center>
   );
 };
 

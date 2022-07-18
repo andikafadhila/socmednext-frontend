@@ -1,5 +1,6 @@
 import { Button, useToast } from "@chakra-ui/react";
 import axios from "axios";
+import Cookies from "js-cookie";
 import useUser from "../hooks/useUser";
 import API_URL from "./apiurl";
 import MiniProfile from "./MiniProfile";
@@ -9,14 +10,23 @@ import Suggestions from "./Suggestions";
 function Feed({ fetchDataOnScrollParent, posts, hasMore, page }) {
   const { isVerified, id, email, username } = useUser();
   const toast = useToast();
+  const token = Cookies.get("token");
 
   const sendEmailVerified = async () => {
     try {
-      await axios.post(`${API_URL}/auth/sendemail-verified`, {
-        id,
-        email,
-        username,
-      });
+      await axios.post(
+        `${API_URL}/auth/sendemail-verified`,
+        {
+          id,
+          email,
+          username,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
       toast({
         title: "Success!",
         description: "Verification send to your email!",

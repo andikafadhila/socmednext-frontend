@@ -31,7 +31,7 @@ const AuthProvider = ({ children }) => {
   if (loading) {
     return (
       <>
-        <Head>
+        {/* <Head>
           <title>hohohoho</title>
           <meta name="twitter:card" content="summary_large_image" />
           <meta
@@ -53,7 +53,7 @@ const AuthProvider = ({ children }) => {
             property="og:image"
             content="https://foto.wartaekonomi.co.id/files/arsip_foto_2019_11_16/otomotif_215524_small.jpg"
           />
-        </Head>
+        </Head> */}
         <Center>
           <Progress size="xl" isIndeterminate />
         </Center>

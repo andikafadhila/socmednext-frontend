@@ -117,7 +117,10 @@ function Header({ submitPostParent }) {
   // postingan
   const [inputCaption, setInputCaption] = useState("");
 
+  const [allValid, setAllValid] = useState(false);
+
   console.log(inputCaption);
+
   const inputCaptionHandler = (e) => {
     setInputCaption(e.target.value);
   };

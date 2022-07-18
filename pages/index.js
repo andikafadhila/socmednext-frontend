@@ -45,7 +45,7 @@ export default function Home() {
       });
     } catch (error) {
       console.log(error);
-      toast.error(error.message || "network error", {
+      toast.error(error.response.data.message || "network error", {
         position: "top-right",
         autoClose: 3000,
         closeOnClick: true,
